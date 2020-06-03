@@ -1,0 +1,47 @@
+
+"support", supp (Agrawal et al., 1996)
+Support is an estimate of P(X & Y) and measures the generality of the rule.
+
+Range: [0, 1]
+
+"confidence", conf (Agrawal et al., 1996)
+Rule confidence is an estimate of P(Y|X) calculated as supp(X -> Y)/supp(X). Confidence is a measure of validity.
+
+Range [0, 1]
+
+"lift", interest factor (Brin et al. 1997)
+Lift quantifies dependence between X and Y by supp(X&Y)/(supp(X)supp(Y)).
+
+Range: [0, Inf] (1 means independence)
+
+"hyperLift" (Hahsler and Hornik, 2007)
+Adaptation of the lift measure which is more robust for low counts. It is based on the idea that under independence the count c_{XY} of the transactions which contain all items in a rule X -> Y follows a hypergeometric distribution (represented by the random variable C_{XY}) with the parameters given by the counts c_X and c_Y.
+
+Hyper-lift is defined as:
+
+hyperlift(X -> Y) = c_XY / Q_d[C_XY],
+
+where Q_d[C_XY] is the quantile of the hypergeometric distribution given by d. The quantile can be given as parameter d (default: d=0.99).
+
+Range: [0, Inf] (1 indicates independence)
+
+
+"confirmedConfidence", descriptive confirmed confidence (Kodratoff, 1999)
+Confidence confirmed by its negative as conf(X -> Y) - conf(X -> !Y).
+
+Range: [-1, 1]
+
+"counterexample", example and counter-example rate
+(supp(X & Y) - supp(X & !Y)) / supp(X & Y)
+
+Range: [0, 1]
+
+"kappa" (Tan and Kumar, 2000)
+Defined as (supp(X & Y) + supp(!X & !Y) - supp(X)supp(Y) - supp(!X)supp(!Y))/(1- supp(X)supp(Y) - supp(!X)supp(!Y))
+
+Range: [-1,1] (0 means independence)
+
+"oddsRatio", odds ratio alpha (Tan et al., 2004)
+The odds of finding X in transactions which contain Y divided by the odds of finding X in transactions which do not contain Y.
+
+Range: [0, Inf] (1 indicates that Y is not associated to X)
