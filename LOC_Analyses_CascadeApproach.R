@@ -12,6 +12,7 @@ library(reshape2)
 library(ggpubr)
 library(forcats)
 library(ggplot2)
+library(arules)
 
 #set working directory to location of script--not needed when called 
 #through Rmarkdown doc. Uncomment below if running locally/manually
@@ -85,7 +86,7 @@ race_tab = xtabs(~cRace, data = LOC_ndup)
 nrow(LOC_ndup[is.na(LOC_ndup$cRace), ])
 
 race_loc_tab = xtabs(~cRace + loc1, data = LOC_ndup)
-race_loc_fisher = fisher.test(matrix(c(4,31,1,2,106,3), byrow = FALSE, ncol = 2))
+race_loc_fisher = fisher.test(matrix(c(4,31,1,2,114,4), byrow = FALSE, ncol = 2))
 nrow(LOC_ndup[which(is.na(LOC_ndup$cRace) & LOC_ndup$loc1 == 'Yes'), ])
 nrow(LOC_ndup[which(is.na(LOC_ndup$cRace) & LOC_ndup$loc1 == 'No'), ])
 
@@ -94,7 +95,7 @@ ethnicity_tab = xtabs(~cEthnicity, data = LOC_ndup)
 nrow(LOC_ndup[is.na(LOC_ndup$cEthnicity), ])
 
 ethnicity_loc_tab = xtabs(~cEthnicity + loc1, data = LOC_ndup)
-ethnicity_loc_fisher = fisher.test(matrix(c(2,33,5,68), byrow = FALSE, ncol = 2))
+ethnicity_loc_fisher = fisher.test(matrix(c(2,33,5,76), byrow = FALSE, ncol = 2))
 nrow(LOC_ndup[which(is.na(LOC_ndup$cEthnicity) & LOC_ndup$loc1 == 'Yes'), ])
 nrow(LOC_ndup[which(is.na(LOC_ndup$cEthnicity) & LOC_ndup$loc1 == 'No'), ])
 
@@ -103,7 +104,7 @@ income_tab = xtabs(~income, data = LOC_ndup)
 nrow(LOC_ndup[is.na(LOC_ndup$income), ])
 
 income_loc_tab = xtabs(~income + loc1, data = LOC_ndup)
-income_loc_fisher = fisher.test(matrix(c(6,21,10,33,52,24), byrow = FALSE, ncol = 2))
+income_loc_fisher = fisher.test(matrix(c(6,21,10,40,54,24), byrow = FALSE, ncol = 2))
 nrow(LOC_ndup[which(is.na(LOC_ndup$income) & LOC_ndup$loc1 == 'Yes'), ])
 nrow(LOC_ndup[which(is.na(LOC_ndup$income) & LOC_ndup$loc1 == 'No'), ])
 
@@ -158,6 +159,7 @@ nrow(LOC_ndup[is.na(LOC_ndup$dBodyMass_class), ])
 
 dBMI_loc_tab = xtabs(~dBodyMass_class + loc1, data = LOC_ndup)
 dBMI_loc_fisher = fisher.test(matrix(c(5,7,15,9,0,12,22,46,34,0), byrow = FALSE, ncol = 2))
+dBMI_loc_fisher_noUW = fisher.test(matrix(c(5,7,15,9,12,22,46,34), byrow = FALSE, ncol = 2))
 nrow(LOC_ndup[which(is.na(LOC_ndup$dBodyMass_class) & LOC_ndup$loc1 == 'Yes'), ])
 nrow(LOC_ndup[which(is.na(LOC_ndup$dBodyMass_class) & LOC_ndup$loc1 == 'No'), ])
 
@@ -229,9 +231,9 @@ nrow(cebq_LOC_ndup[is.na(cebq_LOC_ndup$cebqFR) && cebq_LOC_ndup$loc1 == 'No', ])
 ## EOE
 
 cebq_LOC_ndup$cebqEOE = rowMeans(data.frame(cebq_LOC_ndup$cebq2_raw, cebq_LOC_ndup$cebq13_raw, cebq_LOC_ndup$cebq15_raw, 
-                                            cebq_LOC_ndup$cebq23_raw, cebq_LOC_ndup$cebq27_raw), na.rm = T)
+  cebq_LOC_ndup$cebq23_raw, cebq_LOC_ndup$cebq27_raw), na.rm = T)
 alpha_cebqEOE = summary(psych::alpha(data.frame(cebq_LOC_ndup$cebq2_raw, cebq_LOC_ndup$cebq13_raw, cebq_LOC_ndup$cebq15_raw, 
-                                            cebq_LOC_ndup$cebq23_raw, cebq_LOC_ndup$cebq27_raw)))
+  cebq_LOC_ndup$cebq23_raw, cebq_LOC_ndup$cebq27_raw)))
 
 cebqEOE_mean = mean(cebq_LOC_ndup$cebqEOE, na.rm = TRUE)
 cebqEOE_sd = sd(cebq_LOC_ndup$cebqEOE, na.rm = TRUE)
@@ -248,9 +250,9 @@ nrow(cebq_LOC_ndup[is.na(cebq_LOC_ndup$cebqEOE) && cebq_LOC_ndup$loc1 == 'No', ]
 
 ## EF
 cebq_LOC_ndup$cebqEF = rowMeans(data.frame(cebq_LOC_ndup$cebq1_raw, cebq_LOC_ndup$cebq5_raw, cebq_LOC_ndup$cebq20_raw, 
-                                           cebq_LOC_ndup$cebq22_raw), na.rm = T)
+  cebq_LOC_ndup$cebq22_raw), na.rm = T)
 alpha_cebqEF = summary(psych::alpha(data.frame(cebq_LOC_ndup$cebq1_raw, cebq_LOC_ndup$cebq5_raw, cebq_LOC_ndup$cebq20_raw, 
-                                           cebq_LOC_ndup$cebq22_raw)))
+  cebq_LOC_ndup$cebq22_raw)))
 
 cebqEF_mean = mean(cebq_LOC_ndup$cebqEF, na.rm = TRUE)
 cebqEF_sd = sd(cebq_LOC_ndup$cebqEF, na.rm = TRUE)
@@ -284,9 +286,9 @@ nrow(cebq_LOC_ndup[is.na(cebq_LOC_ndup$cebqDD) && cebq_LOC_ndup$loc1 == 'No', ])
 
 ## SR
 cebq_LOC_ndup$cebqSR = rowMeans(data.frame(cebq_LOC_ndup$cebq3_raw, cebq_LOC_ndup$cebq17_raw, cebq_LOC_ndup$cebq21_raw, 
-                                           cebq_LOC_ndup$cebq26_raw, cebq_LOC_ndup$cebq30_raw), na.rm = T)
+  cebq_LOC_ndup$cebq26_raw, cebq_LOC_ndup$cebq30_raw), na.rm = T)
 alpha_cebqSR = summary(psych::alpha(data.frame(cebq_LOC_ndup$cebq3_raw, cebq_LOC_ndup$cebq17_raw, cebq_LOC_ndup$cebq21_raw, 
-                                   cebq_LOC_ndup$cebq26_raw, cebq_LOC_ndup$cebq30_raw)))
+  cebq_LOC_ndup$cebq26_raw, cebq_LOC_ndup$cebq30_raw)))
 
 cebqSR_mean = mean(cebq_LOC_ndup$cebqSR, na.rm = TRUE)
 cebqSR_sd = sd(cebq_LOC_ndup$cebqSR, na.rm = TRUE)
@@ -303,9 +305,9 @@ nrow(cebq_LOC_ndup[is.na(cebq_LOC_ndup$cebqSR) && cebq_LOC_ndup$loc1 == 'No', ])
 
 ## SE
 cebq_LOC_ndup$cebqSE = rowMeans(data.frame(cebq_LOC_ndup$cebq4_raw, cebq_LOC_ndup$cebq8_raw, cebq_LOC_ndup$cebq18_raw, 
-                                           cebq_LOC_ndup$cebq35_raw), na.rm = T)
+  cebq_LOC_ndup$cebq35_raw), na.rm = T)
 alpha_cebqSE = summary(psych::alpha(data.frame(cebq_LOC_ndup$cebq4_raw, cebq_LOC_ndup$cebq8_raw, cebq_LOC_ndup$cebq18_raw, 
-                                   cebq_LOC_ndup$cebq35_raw)))
+  cebq_LOC_ndup$cebq35_raw)))
 
 cebqSE_mean = mean(cebq_LOC_ndup$cebqSE, na.rm = TRUE)
 cebqSE_sd = sd(cebq_LOC_ndup$cebqSE, na.rm = TRUE)
@@ -339,9 +341,9 @@ nrow(cebq_LOC_ndup[is.na(cebq_LOC_ndup$cebqEUE) && cebq_LOC_ndup$loc1 == 'No', ]
 
 ## FF
 cebq_LOC_ndup$cebqFF = rowMeans(data.frame(cebq_LOC_ndup$cebq7_raw, cebq_LOC_ndup$cebq10_raw, cebq_LOC_ndup$cebq16_raw, 
-                                           cebq_LOC_ndup$cebq24_raw, cebq_LOC_ndup$cebq32_raw, cebq_LOC_ndup$cebq33_raw), na.rm = T)
+  cebq_LOC_ndup$cebq24_raw, cebq_LOC_ndup$cebq32_raw, cebq_LOC_ndup$cebq33_raw), na.rm = T)
 alpha_cebqFF = summary(psych::alpha(data.frame(cebq_LOC_ndup$cebq7_raw, cebq_LOC_ndup$cebq10_raw, cebq_LOC_ndup$cebq16_raw, 
-                                   cebq_LOC_ndup$cebq24_raw, cebq_LOC_ndup$cebq32_raw, cebq_LOC_ndup$cebq33_raw)))
+  cebq_LOC_ndup$cebq24_raw, cebq_LOC_ndup$cebq32_raw, cebq_LOC_ndup$cebq33_raw)))
 
 cebqFF_mean = mean(cebq_LOC_ndup$cebqFF, na.rm = TRUE)
 cebqFF_sd = sd(cebq_LOC_ndup$cebqFF, na.rm = TRUE)
@@ -515,7 +517,7 @@ nrow(cfq_LOC_ndup[is.na(cfq_LOC_ndup$cfqREST) && cfq_LOC_ndup$loc1 == 'No', ])
 ## PE
 cfq_LOC_ndup$cfqPE = rowMeans(cfq_LOC_ndup[57:60], na.rm = T)
 alpha_cfqPE = summary(psych::alpha(cfq_LOC_ndup[57:60]))
-                       
+
 cfqPE_mean = mean(cfq_LOC_ndup$cfqPE, na.rm = TRUE)
 cfqPE_sd = sd(cfq_LOC_ndup$cfqPE, na.rm = TRUE)
 cfqPE_range = range(cfq_LOC_ndup$cfqPE, na.rm = TRUE)
@@ -630,46 +632,49 @@ pruned.rules_lhs1_conf33 = rules_lhs1_conf33[!is.redundant(rules_lhs1_conf33)]
 
 #add odds ratios, chi-squared and its p, and fisher p to rules information
 quality(pruned.rules_lhs1_conf33) = cbind(quality(pruned.rules_lhs1_conf33), 
-                                          oddsRatio = interestMeasure(pruned.rules_lhs1_conf33, 
-                                                                      measure = "oddsRatio", 
-                                                                      transactions = LOC_arules_trans),
-                                          chi.sq = interestMeasure(pruned.rules_lhs1_conf33, 
-                                                                   measure = "chiSquared",
-                                                                   transactions = LOC_arules_trans),
-                                          chi.sq.p = interestMeasure(pruned.rules_lhs1_conf33, 
-                                                                     measure = "chiSquared", significance = TRUE,
-                                                                     transactions = LOC_arules_trans),
-                                          fisher.p = interestMeasure(pruned.rules_lhs1_conf33, 
-                                                                measure = "fishersExactTest",
-                                                                transactions = LOC_arules_trans))
+  oddsRatio = interestMeasure(pruned.rules_lhs1_conf33, 
+    measure = "oddsRatio", 
+    transactions = LOC_arules_trans),
+  addVal = interestMeasure(pruned.rules_lhs1_conf33, 
+    measure = "addedValue", 
+    transactions = LOC_arules_trans),
+  kappa = interestMeasure(pruned.rules_lhs1_conf33, 
+    measure = "kappa", 
+    transactions = LOC_arules_trans),
+  fisher.p = interestMeasure(pruned.rules_lhs1_conf33, 
+    measure = "fishersExactTest",
+    transactions = LOC_arules_trans))
 
 #remove empty rules
 pruned.rules_lhs1_conf33 = subset(pruned.rules_lhs1_conf33, subset = size(lhs(pruned.rules_lhs1_conf33))!=0)
 
+#check added value and correlation
+pruned.rules_lhs1_conf33_qdat = data.frame(quality(pruned.rules_lhs1_conf33))
+nrow(pruned.rules_lhs1_conf33_qdat[pruned.rules_lhs1_conf33_qdat$kappa>=0.20, ])
+nrow(pruned.rules_lhs1_conf33_qdat[pruned.rules_lhs1_conf33_qdat$addVal>=0.05, ])
+
+pruned.rules_lhs1_conf33 = subset(pruned.rules_lhs1_conf33, subset = quality(pruned.rules_lhs1_conf33)[8]>=0.20)
+pruned.rules_lhs1_conf33 = subset(pruned.rules_lhs1_conf33, subset = quality(pruned.rules_lhs1_conf33)[7]>=0.05)
 
 #add addjustment for multiple comparisons to data
 quality(pruned.rules_lhs1_conf33) = cbind(quality(pruned.rules_lhs1_conf33), 
-                                          fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs1_conf33)$fisher.p, method = 'holm'), 4))
+  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs1_conf33)$fisher.p, method = 'holm'), 4))
 
 #sort rules
 pruned.rules_lhs1_conf33 = sort(pruned.rules_lhs1_conf33, by=c("fisher.p","fisher.padj_holm"), decreasing = FALSE)
 
-
+#HERE
 #make list of significant predictors
-lhs1_conf33_vars = c("cfq26=Disagree", "cfq28=Disagree", "cebq34_gRarely")
+lhs1_conf33_vars = c("cfq26=Disagree", "cfq28=Disagree", "cebq34_gRarely", "cfq23_lsNeutralAD", "cebq12_gRarely",
+  "cebq7_gSometimes", "cfq20=Agree", "cebq33_gSometimes", "mEducation_HS", "cfq29=Always", "cfq31=Always")
 
 #get odds ratio confidence intervals for significant uncorrected fisher pvalue rules
 #(all rules in this case)
 OR_CI_pruned.rules_lhs1_conf33 = ARM_ORconf(pruned.rules_lhs1_conf33, LOC_arules, 1, "Yes")
 
-#gets odds ratio upper confidence bound to use for comparision with multiple predictors odds ratios
-OR_upperCI_pruned.rules_lhs1_conf33_no_cfq26 = OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[1]
-OR_upperCI_pruned.rules_lhs1_conf33_no_cfq28 = OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[2]
-OR_upperCI_pruned.rules_lhs1_conf33_no_cebq34 = OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[3]
-
 #add odds ratio CI to rules information
 quality(pruned.rules_lhs1_conf33) = cbind(quality(pruned.rules_lhs1_conf33),
-                                          OR_CI_pruned.rules_lhs1_conf33[3:4])
+  OR_CI_pruned.rules_lhs1_conf33[3:4])
 
 #organize columns 
 quality(pruned.rules_lhs1_conf33) = quality(pruned.rules_lhs1_conf33)[c(4, 1:3, 5:7, 10:11, 8:9)]
@@ -699,22 +704,29 @@ pruned.rules_lhs2_conf50 = rules_lhs2_conf50[!is.redundant(rules_lhs2_conf50)]
 
 #add odds ratio, chi-square and its p, and fisher p to rules information
 quality(pruned.rules_lhs2_conf50) = cbind(quality(pruned.rules_lhs2_conf50), 
-                                          oddsRatio = interestMeasure(pruned.rules_lhs2_conf50, 
-                                                                      measure = "oddsRatio", 
-                                                                      transactions = LOC_arules_trans),
-                                          chi.sq = interestMeasure(pruned.rules_lhs2_conf50, 
-                                                                   measure = "chiSquared",
-                                                                   transactions = LOC_arules_trans),
-                                          chi.sq.p = interestMeasure(pruned.rules_lhs2_conf50, 
-                                                                     measure = "chiSquared", significance = TRUE,
-                                                                     transactions = LOC_arules_trans),
-                                          fisher.p = interestMeasure(pruned.rules_lhs2_conf50, 
-                                                                measure = "fishersExactTest", 
-                                                                transactions = LOC_arules_trans))
+  oddsRatio = interestMeasure(pruned.rules_lhs2_conf50, 
+    measure = "oddsRatio", 
+    transactions = LOC_arules_trans),
+  addVal = interestMeasure(pruned.rules_lhs2_conf50, 
+    measure = "addedValue", 
+    transactions = LOC_arules_trans),
+  kappa = interestMeasure(pruned.rules_lhs2_conf50, 
+    measure = "kappa", 
+    transactions = LOC_arules_trans),
+  fisher.p = interestMeasure(pruned.rules_lhs2_conf50, 
+    measure = "fishersExactTest", 
+    transactions = LOC_arules_trans))
 
 #remove empty rules
 pruned.rules_lhs2_conf50 = subset(pruned.rules_lhs2_conf50, subset = size(lhs(pruned.rules_lhs2_conf50))!=0)
 
+#prune rules for correlation and added value
+pruned.rules_lhs2_conf50_qdat = data.frame(quality(pruned.rules_lhs2_conf50))
+nrow(pruned.rules_lhs2_conf50_qdat[pruned.rules_lhs2_conf50_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs2_conf50_qdat[pruned.rules_lhs2_conf50_qdat$addVal >=0.05, ])
+
+pruned.rules_lhs2_conf50 = subset(pruned.rules_lhs2_conf50, subset = quality(pruned.rules_lhs2_conf50)[8]>=0.20)
+pruned.rules_lhs2_conf50 = subset(pruned.rules_lhs2_conf50, subset = quality(pruned.rules_lhs2_conf50)[7]>=0.05)
 
 ### no subset--all rules  ####
 #rename so don't overwrite original
@@ -722,7 +734,13 @@ pruned.rules_lhs2_conf50_all = pruned.rules_lhs2_conf50
 
 #add correction for multiple comparisons
 quality(pruned.rules_lhs2_conf50_all) = cbind(quality(pruned.rules_lhs2_conf50_all), 
-                                               fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs2_conf50_all)$fisher.p, method = 'holm'), 4))
+  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs2_conf50_all)$fisher.p, method = 'holm'), 4))
+
+##plot two against each other: phi and added value
+pruned.rules_lhs2_conf50_all_quality = data.frame(quality(pruned.rules_lhs2_conf50_all))
+pruned.rules_lhs2_conf50_phi.addVal_plot = ggplot(pruned.rules_lhs2_conf50_all_quality, aes(x = phi, y = addVal)) + 
+  geom_point() + 
+  geom_smooth(method = 'lm')
 
 #add correction for multiple comparisons
 pruned.rules_lhs2_conf50_all = sort(pruned.rules_lhs2_conf50_all, by=c("fisher.p","fisher.padj_holm"), decreasing = FALSE)
@@ -733,7 +751,7 @@ OR_CI_pruned.rules_lhs2_conf50_all = ARM_ORconf(pruned.rules_lhs2_conf50_all, LO
 
 #add odds ration CI to rules information
 quality(pruned.rules_lhs2_conf50_all) = cbind(quality(pruned.rules_lhs2_conf50_all),
-                                               OR_CI_pruned.rules_lhs2_conf50_all[4:5])
+  OR_CI_pruned.rules_lhs2_conf50_all[4:5])
 
 #organize columns
 quality(pruned.rules_lhs2_conf50_all) = quality(pruned.rules_lhs2_conf50_all)[c(4, 1:3, 5:7, 10:11, 8:9)]
@@ -747,7 +765,7 @@ dist_pruned.rules_lhs2_conf50 = dissimilarity(pruned.rules_lhs2_conf50,args = li
 
 ## mediods partitioning--determine number of clusters ####
 #within cluster sums of squares--look for elbow in graph
-pruned.rules_lhs2_conf50_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50), cluster::pam, method = "wss", k.max=15)+ geom_vline(xintercept = 5, linetype = 2)+labs(subtitle = "Elbow method")
+pruned.rules_lhs2_conf50_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50), cluster::pam, method = "wss", k.max=15)+ geom_vline(xintercept = 4, linetype = 2)+labs(subtitle = "Elbow method")
 
 #silhouette width
 pruned.rules_lhs2_conf50_nclustSil = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50), cluster::pam, method = "silhouette", k.max=15)+ labs(subtitle = "Silhouette method")
@@ -760,16 +778,16 @@ pruned.rules_lhs2_conf50_nclustPlotGrid = plot_grid(pruned.rules_lhs2_conf50_ncl
 
 #test stability metrics (remove one collumn at a time sequentially and look at stability)
 #pruned.rules_lhs2_conf50_nclust_stabV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50), 2:10, clMethods=c("pam"), validation="stability")
-   
+
 #cluster validity table
 pruned.rules_lhs2_conf50_nclust_Vsum = data.frame(matrix(c("Connectivity", 0.000,    "pam", 2,
-                                                            "Dunn",         0.593,    "pam", 10,
-                                                            "Silhouette",   0.498,    "pam", 4,
-                                                            "APN",          0.0000,    "pam", 4,
-                                                            "AD",           0.5054,    "pam", 10,
-                                                            "ADM",          0.0000,    "pam", 4,
-                                                            "FOM",          0.0753,    "pam", 10), 
-                                                          byrow = TRUE, nrow = 7, ncol = 4))
+  "Dunn",         0.593,    "pam", 10,
+  "Silhouette",   0.498,    "pam", 4,
+  "APN",          0.0000,    "pam", 4,
+  "AD",           0.5054,    "pam", 10,
+  "ADM",          0.0000,    "pam", 4,
+  "FOM",          0.0753,    "pam", 10), 
+  byrow = TRUE, nrow = 7, ncol = 4))
 names(pruned.rules_lhs2_conf50_nclust_Vsum) = c("measure", "score_at5", "method", "clusters")     
 
 ## run pam to get cluster membership ####
@@ -790,8 +808,8 @@ DataFrame_pruned.rules_lhs2_conf50_nosubset = DATAFRAME(pruned.rules_lhs2_conf50
 
 #need the following two split the LHS into 2 columns
 DataFrame_pruned.rules_lhs2_conf50_nosubset = with(DataFrame_pruned.rules_lhs2_conf50_nosubset,
-                                                       cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_nosubset$LHS,"\\+", c('LHS1', 'LHS2')),
-                                                             DataFrame_pruned.rules_lhs2_conf50_nosubset[2:14]))
+  cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_nosubset$LHS,"\\+", c('LHS1', 'LHS2')),
+    DataFrame_pruned.rules_lhs2_conf50_nosubset[2:14]))
 
 
 #merge with transaction labels dataframe to get category labels for each rule in LHS1
@@ -833,9 +851,9 @@ pruned.rules_lhs2_conf50_nosubset_clust4.1$Cat2 = factor(pruned.rules_lhs2_conf5
 #make cross tabs
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_nosubset_clust4.1))
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1 = rbind( xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1, 
-                                                          coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1))
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1))
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1 = cbind(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1,
-                                                         rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1))
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.1))
 
 #get frequency for each question
 qfreq_pruned.rules_lhs2_conf50_nosubset_clust4.1_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_nosubset_clust4.1))
@@ -855,9 +873,9 @@ pruned.rules_lhs2_conf50_nosubset_clust4.2$Cat2 = factor(pruned.rules_lhs2_conf5
 #make cross tabs
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_nosubset_clust4.2))
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2 = rbind( xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2, 
-                                                          coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2))
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2))
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2 = cbind(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2,
-                                                         rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2))
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.2))
 
 #get frequency for each question
 qfreq_pruned.rules_lhs2_conf50_nosubset_clust4.2_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_nosubset_clust4.2))
@@ -877,9 +895,9 @@ pruned.rules_lhs2_conf50_nosubset_clust4.3$Cat2 = factor(pruned.rules_lhs2_conf5
 #make cross tabs
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_nosubset_clust4.3))
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3 = rbind( xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3, 
-                                                          coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3))
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3))
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3 = cbind(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3,
-                                                         rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3))
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.3))
 
 #get frequency for each question
 qfreq_pruned.rules_lhs2_conf50_nosubset_clust4.3_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_nosubset_clust4.3))
@@ -899,9 +917,9 @@ pruned.rules_lhs2_conf50_nosubset_clust4.4$Cat2 = factor(pruned.rules_lhs2_conf5
 #make cross tabs
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_nosubset_clust4.4))
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4 = rbind( xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4, 
-                                                          coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4))
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4))
 xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4 = cbind(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4,
-                                                         rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4))
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_nosubset_clust4.4))
 
 #get frequency for each question
 qfreq_pruned.rules_lhs2_conf50_nosubset_clust4.4_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_nosubset_clust4.4))
@@ -910,11 +928,7 @@ qfreq_pruned.rules_lhs2_conf50_nosubset_clust4.4 = merge(qfreq_pruned.rules_lhs2
 
 ### subset to holm sigtrend from lhs1 ####
 #subset to rules that contain one of the significat single predictors
-pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = subset(pruned.rules_lhs2_conf50, subset=lhs %in% lhs1_conf33_vars)
-
-#add multiple comparison correction for subset to rules information
-quality(pruned.rules_lhs2_conf50_lhs1_holm_sigtrend) = cbind(quality(pruned.rules_lhs2_conf50_lhs1_holm_sigtrend), 
-                                                                  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs2_conf50_lhs1_holm_sigtrend)$chi.sq.p, method = 'holm'), 4))
+pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = subset(pruned.rules_lhs2_conf50_all, subset=lhs %in% lhs1_conf33_vars)
 
 #sort
 pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = sort(pruned.rules_lhs2_conf50_lhs1_holm_sigtrend, by=c("chi.sq.p","fisher.padj_holm"), decreasing = FALSE)
@@ -925,7 +939,7 @@ OR_CI_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = ARM_ORconf(pruned.rules_lhs2
 
 #add odds ratio CI to rules information
 quality(pruned.rules_lhs2_conf50_lhs1_holm_sigtrend) = cbind(quality(pruned.rules_lhs2_conf50_lhs1_holm_sigtrend),
-                                                                  OR_CI_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend[3:4])
+  OR_CI_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend[3:4])
 
 #organize columns
 quality(pruned.rules_lhs2_conf50_lhs1_holm_sigtrend) = quality(pruned.rules_lhs2_conf50_lhs1_holm_sigtrend)[c(4, 1:3, 5:7, 10:11, 8:9)]
@@ -935,8 +949,8 @@ DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = DATAFRAME(pruned.rules_l
 
 #need the following two split the LHS into 2 columns
 DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = with(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend, 
-                                                        cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS, "\\+", c('LHS1', 'LHS2')), 
-                                                              DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend[2:13]))
+  cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS, "\\+", c('LHS1', 'LHS2')), 
+    DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend[2:13]))
 
 
 #merge with transaction labels dataframe to get category labels for each rule in LHS1
@@ -960,33 +974,61 @@ DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$Cat2 = factor(DataFrame_pr
 #make crosstab of rule categories
 xtabs_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = xtabs(~Cat1 + Cat2, data = DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend)
 
+
 #--need to limit data to just those with one of the significant predictors first
 DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$OR_ExceedCI = 
-  ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cebq34_gRarely", 
-         ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_upperCI_pruned.rules_lhs1_conf33_no_cebq34, "Y"," N"),
-         ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cebq34_gRarely", 
-                ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_upperCI_pruned.rules_lhs1_conf33_no_cebq34, "Y", "N"), 
-                ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq28=Disagree", 
-                       ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_upperCI_pruned.rules_lhs1_conf33_no_cfq28, "Y", "N"), 
-                       ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq26=Disagree",
-                              ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_upperCI_pruned.rules_lhs1_conf33_no_cfq28, "Y", "N"),
-                              ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq26=Disagree", 
-                                     ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_upperCI_pruned.rules_lhs1_conf33_no_cfq26, "Y", "N"),
-                                     ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq26=Disagree",
-                                            ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_upperCI_pruned.rules_lhs1_conf33_no_cfq26, "Y", "N"), NA))))))
+  ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq26=Disagree" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq26=Disagree", 
+    ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[1], "Y"," N"), 
+    ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq28=Disagree" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq28=Disagree", 
+      ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[2], "Y", "N"),
+      ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cebq34_gRarely" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cebq34_gRarely", 
+        ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[3], "Y", "N"),
+        ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq23_lsNeutralAD" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq23_lsNeutralAD", 
+          ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[4], "Y", "N"),
+          ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cebq12_gRarely" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cebq12_gRarely", 
+            ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[5], "Y", "N"),
+            ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cebq7_gSometimes" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cebq7_gSometimes", 
+              ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[6], "Y", "N"),
+              ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq20=Agree" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq20=Agree", 
+                ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[7], "Y", "N"),
+                ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cebq33_gSometimes" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cebq33_gSometimes", 
+                  ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[8], "Y", "N"),
+                  ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "mEducation_HS" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "mEducation_HS", 
+                    ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[9], "Y", "N"),
+                    ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq29=Always" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq29=Always", 
+                      ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[10], "Y", "N"),
+                      ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq31=Always" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq31=Always", 
+                        ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[11], "Y", "N"), NA)))))))))))
 
 
 write.csv(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend, file = "ResultsOutput/indQ_LOC-YES_lhs2_conf50_additive.csv", row.names = FALSE)
-
+      
 ### Logits to look for interaction for rules with 2 items and OR outside of 1 item OR 95% bound ####
-## CEBQ34_gRarely+CFQ26_Disagree ####
+## CEBQ12_gRarely+CFQ26_Disagree - no Interaction ####
 LOC_arules$cfq26_Disagree = ifelse(LOC_arules$cfq26 == "Disagree", TRUE, FALSE)
-CEBQ34.CFQ26_logit = glm(loc1~cebq34_gRarely*cfq26_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CEBQ34.CFQ26_sum = summary(CEBQ34.CFQ26_logit)
-CEBQ34.CFQ26_coef = coef(CEBQ34.CFQ26_sum)[2:4, ]
-CEBQ34.CFQ26_OR = exp(coef(CEBQ34.CFQ26_sum)[2:4,1:2])
-CEBQ34.CFQ26_tab = data.frame(CEBQ34.CFQ26_coef, CEBQ34.CFQ26_OR)
-colnames(CEBQ34.CFQ26_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+CEBQ12.CFQ26_logit = glm(loc1~cebq12_gRarely*cfq26_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ12.CFQ26_sum = summary(CEBQ12.CFQ26_logit)
+CEBQ12.CFQ26_coef = coef(CEBQ12.CFQ26_sum)[2:4, ]
+CEBQ12.CFQ26_OR = exp(coef(CEBQ12.CFQ26_sum)[2:4,1:2])
+CEBQ12.CFQ26_tab = data.frame(CEBQ12.CFQ26_coef, CEBQ12.CFQ26_OR)
+colnames(CEBQ12.CFQ26_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ7_gRarely+BF_ls7mo ####
+CEBQ33.BFls7mo_logit = glm(loc1~cebq33_gSometimes*BreastFed_ls7mo, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ33.BFls7mo_sum = summary(CEBQ33.BFls7mo_logit)
+CEBQ33.BFls7mo_coef = coef(CEBQ33.BFls7mo_sum)[2:4, ]
+CEBQ33.BFls7mo_OR = exp(coef(CEBQ33.BFls7mo_sum)[2:4,1:2])
+CEBQ33.BFls7mo_tab = data.frame(CEBQ33.BFls7mo_coef, CEBQ33.BFls7mo_OR)
+colnames(CEBQ33.BFls7mo_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ33_gSometimes+CEB1_gSometimes ####
+CEBQ33.CEBQ1_logit = glm(loc1~cebq33_gSometimes*cebq1_gSometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ33.CEBQ1_sum = summary(CEBQ33.CEBQ1_logit)
+CEBQ33.CEBQ1_coef = coef(CEBQ33.CEBQ1_sum)[2:4, ]
+CEBQ33.CEBQ1_OR = exp(coef(CEBQ33.CEBQ1_sum)[2:4,1:2])
+CEBQ33.CEBQ1_tab = data.frame(CEBQ33.CEBQ1_coef, CEBQ33.CEBQ1_OR)
+colnames(CEBQ33.CEBQ1_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
 
 ## CFQ28_Disagree+CEBQ33_gSometimes ####
 LOC_arules$cfq28_Disagree = ifelse(LOC_arules$cfq28 == "Disagree", TRUE, FALSE)
@@ -997,6 +1039,35 @@ CFQ28.CEBQ33_OR = exp(coef(CFQ28.CEBQ33_sum)[2:4,1:2])
 CFQ28.CEBQ33_tab = data.frame(CFQ28.CEBQ33_coef, CFQ28.CEBQ33_OR)
 colnames(CFQ28.CEBQ33_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
 
+## CEBQ34_gRarely+CFQ28_Disagree ####
+CEBQ34.CFQ28_logit = glm(loc1~cebq34_gRarely*cfq28_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ34.CFQ28_sum = summary(CEBQ34.CFQ28_logit)
+CEBQ34.CFQ28_coef = coef(CEBQ34.CFQ28_sum)[2:4, ]
+CEBQ34.CFQ28_OR = exp(coef(CEBQ34.CFQ28_sum)[2:4,1:2])
+CEBQ34.CFQ28_tab = data.frame(CEBQ34.CFQ28_coef, CEBQ34.CFQ28_OR)
+colnames(CEBQ34.CFQ28_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ7_gSometimesy+CEB1_gSometimes ####
+LOC_arules$cfq26_Disagree = ifelse(LOC_arules$cebq1_gRarely == "Disagree", TRUE, FALSE)
+
+CEBQ7.CEBQ1_logit = glm(loc1~cebq7_gSometimes*cebq1_gSometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ7.CEBQ1_sum = summary(CEBQ7.CEBQ1_logit)
+CEBQ7.CEBQ1_coef = coef(CEBQ7.CEBQ1_sum)[2:4, ]
+CEBQ7.CEBQ1_OR = exp(coef(CEBQ7.CEBQ1_sum)[2:4,1:2])
+CEBQ7.CEBQ1_tab = data.frame(CEBQ7.CEBQ1_coef, CEBQ7.CEBQ1_OR)
+colnames(CEBQ7.CEBQ1_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## cfq20_Agree+cfq21_lsNeutralAD ####
+LOC_arules$cfq21_lsNeutralAD = ifelse(LOC_arules$cfq21 == "Disagree" | LOC_arules$cfq21 == "SlightlyDis", TRUE, FALSE)
+LOC_arules$cfq20_Agree = ifelse(LOC_arules$cfq20 == "Agree", TRUE, FALSE)
+
+CFQ20.CFQ21_logit = glm(loc1~LOC_arules$cfq20_Agree*cfq21_lsNeutralAD, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CFQ20.CFQ21_sum = summary(CFQ20.CFQ21_logit)
+CFQ20.CFQ21_coef = coef(CFQ20.CFQ21_sum)[2:4, ]
+CFQ20.CFQ21_OR = exp(coef(CFQ20.CFQ21_sum)[2:4,1:2])
+CFQ20.CFQ21_tab = data.frame(CFQ20.CFQ21_coef, CFQ20.CFQ21_OR)
+colnames(CFQ20.CFQ21_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
 ## CEBQ34_gRarely+cfq27_lsNeutralAD ####
 LOC_arules$cfq27_lsNeutralAD = ifelse(LOC_arules$cfq27 == "Disagree" | LOC_arules$cfq27 == "SlightlyDis", TRUE, FALSE)
 CEBQ34.CFQ27_logit = glm(loc1~cebq34_gRarely*cfq27_lsNeutralAD, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
@@ -1006,6 +1077,16 @@ CEBQ34.CFQ27_OR = exp(coef(CEBQ34.CFQ27_sum)[2:4,1:2])
 CEBQ34.CFQ27_tab = data.frame(CEBQ34.CFQ27_coef, CEBQ34.CFQ27_OR)
 colnames(CEBQ34.CFQ27_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
 
+## CEBQ7_gSometimes+CFQ28_Disagree - no interaction ####
+LOC_arules$cfq28_lsNeutralAD = ifelse(LOC_arules$cfq28 == "Disagree" | LOC_arules$cfq28 == "SlightlyDis", TRUE, FALSE)
+
+CEBQ7.CFQ28_logit = glm(loc1~cebq7_gSometimes*cfq28_lsNeutralAD, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ7.CFQ28_sum = summary(CEBQ7.CFQ28_logit)
+CEBQ7.CFQ28_coef = coef(CEBQ7.CFQ28_sum)[2:4, ]
+CEBQ7.CFQ28_OR = exp(coef(CEBQ7.CFQ28_sum)[2:4,1:2])
+CEBQ7.CFQ28_tab = data.frame(CEBQ7.CFQ28_coef, CEBQ7.CFQ28_OR)
+colnames(CEBQ7.CFQ28_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
 ### trace transactions matching rules to participants ####
 st_pruned.rules_lhs2_conf50 = supportingTransactions(pruned.rules_lhs2_conf50_all, LOC_arules_trans)
 indQ_IDmatch_trans = data.frame(LOC_ndup[!is.na(LOC_ndup$loc1), ]$StudyID, rownames(LOC_arules), LOC_ndup[!is.na(LOC_ndup$loc1), ]$loc1)
@@ -1013,7 +1094,7 @@ indQ_IDmatch_rules = data.frame(indQ_IDmatch_trans, t(as(st_pruned.rules_lhs2_co
 names(indQ_IDmatch_rules)[1:3] = c('StudyID', "TransID", "LOC")
 indQ_IDmatch_rules = indQ_IDmatch_rules[indQ_IDmatch_rules$LOC == 'Yes' & !is.na(indQ_IDmatch_rules$LOC), ]
 
-for(c in 4:37){
+for(c in 4:51){
   indQ_IDmatch_rules[[c]] = ifelse(indQ_IDmatch_rules[[c]] == "TRUE", 1, 0)
 }
 
@@ -1034,7 +1115,7 @@ indQ_endorse_LOC_conf50 = ggplot(indQ_IDmatch_rules, aes(x = nRulesTrue))+
 ###loc-no 1, sup = 0.19 (n = 30), conf=33####
 #get rules with only 1 predictor
 rules_lhs1_conf33_no = apriori(LOC_arules_trans, parameter = list(maxlen = 2, supp = 0.19, conf = 0.33), 
-                                    appearance = list(default="lhs", rhs="loc1=No"))
+  appearance = list(default="lhs", rhs="loc1=No"))
 
 #prune rules that are redundant-more important for multiple predictors as may get two rules with 
 #different predictor order, thus are the same
@@ -1042,33 +1123,39 @@ pruned.rules_lhs1_conf33_no = rules_lhs1_conf33_no[!is.redundant(rules_lhs1_conf
 
 #add odds ratio,chi-square (need to specify also want pvalue) and fisher exact p test to the rules information
 quality(pruned.rules_lhs1_conf33_no) = cbind(quality(pruned.rules_lhs1_conf33_no), 
-                                                  oddsRatio = interestMeasure(pruned.rules_lhs1_conf33_no, 
-                                                                              measure = "oddsRatio", 
-                                                                              transactions = LOC_arules_trans),
-                                                  chi.sq = interestMeasure(pruned.rules_lhs1_conf33_no, 
-                                                                              measure = "chiSquared",
-                                                                              transactions = LOC_arules_trans),
-                                                  chi.sq.p = interestMeasure(pruned.rules_lhs1_conf33_no, 
-                                                                              measure = "chiSquared", significance = TRUE,
-                                                                              transactions = LOC_arules_trans),
-                                                  fisher.p = interestMeasure(pruned.rules_lhs1_conf33_no, 
-                                                                              measure = "fishersExactTest",
-                                                                              transactions = LOC_arules_trans))
+  oddsRatio = interestMeasure(pruned.rules_lhs1_conf33_no, 
+    measure = "oddsRatio", 
+    transactions = LOC_arules_trans),
+  addVal = interestMeasure(pruned.rules_lhs1_conf33_no, 
+    measure = "addedValue", 
+    transactions = LOC_arules_trans),
+  kappa = interestMeasure(pruned.rules_lhs1_conf33_no, 
+    measure = "kappa", 
+    transactions = LOC_arules_trans),
+  fisher.p = interestMeasure(pruned.rules_lhs1_conf33_no, 
+    measure = "fishersExactTest",
+    transactions = LOC_arules_trans))
+
 #remove empty rules
 pruned.rules_lhs1_conf33_no = subset(pruned.rules_lhs1_conf33_no, subset = size(lhs(pruned.rules_lhs1_conf33_no))!=0)
 
-#add holm-bonferroni correction to fisher p-values
-quality(pruned.rules_lhs1_conf33_no) = cbind(quality(pruned.rules_lhs1_conf33_no), 
-                                                  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs1_conf33_no)$fisher.p, method = 'holm'), 4))
+#check added value and correlation
+pruned.rules_lhs1_conf33_no_qdat = data.frame(quality(pruned.rules_lhs1_conf33_no))
+nrow(pruned.rules_lhs1_conf33_no_qdat[pruned.rules_lhs1_conf33_no_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs1_conf33_no_qdat[pruned.rules_lhs1_conf33_no_qdat$addVal >=0.05, ])
+
+pruned.rules_lhs1_conf33_no_red = subset(pruned.rules_lhs1_conf33_no, quality(pruned.rules_lhs1_conf33_no)[8]>=0.20)
+pruned.rules_lhs1_conf33_no_red = subset(pruned.rules_lhs1_conf33_no_red, quality(pruned.rules_lhs1_conf33_no_red)[7]>=0.05)
+
+#add holm correction to fisher p-values
+quality(pruned.rules_lhs1_conf33_no_red) = cbind(quality(pruned.rules_lhs1_conf33_no_red), 
+  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs1_conf33_no_red)$fisher.p, method = 'holm'), 4))
 
 #sort rules by pvalues
-pruned.rules_lhs1_conf33_no = sort(pruned.rules_lhs1_conf33_no, by=c("fisher.p", "fisher.padj_holm"), decreasing = FALSE)
+pruned.rules_lhs1_conf33_no_red = sort(pruned.rules_lhs1_conf33_no_red, by=c("fisher.p", "fisher.padj_holm"), decreasing = FALSE)
 
 #make list of significant variables to reduce multiple predictor rules later on (when we test for additive effects)
-lhs1_conf33_no_vars_fdr_holm_sig = c("cebq34_lsSometimes")
-
-#reduce to those with significant uncorrected fisher pvalues
-pruned.rules_lhs1_conf33_no_red = pruned.rules_lhs1_conf33_no[1:13]
+lhs1_conf33_no_vars_holm_sig = c("cebq34_lsSometimes")
 
 #get confidence intervals for odds ratio of rules
 OR_CI_pruned.rules_lhs1_conf33_no = ARM_ORconf(pruned.rules_lhs1_conf33_no_red, LOC_arules, 1, "No")
@@ -1078,7 +1165,7 @@ OR_upperCI_pruned.rules_lhs1_conf33_no = OR_CI_pruned.rules_lhs1_conf33_no$OR_up
 
 #add CIs to rules qualities and re-order columns nicely
 quality(pruned.rules_lhs1_conf33_no_red) = cbind(quality(pruned.rules_lhs1_conf33_no_red),
-                                                      OR_CI_pruned.rules_lhs1_conf33_no[3:4])
+  OR_CI_pruned.rules_lhs1_conf33_no[3:4])
 quality(pruned.rules_lhs1_conf33_no_red) = quality(pruned.rules_lhs1_conf33_no_red)[c(4, 1:3, 5:7, 10:11, 8:9)]
 
 #convert rules into a data frame to look at/use xtable with in markdown document
@@ -1087,9 +1174,6 @@ DataFrame_pruned.rules_lhs1_conf33_no_sig = DATAFRAME(pruned.rules_lhs1_conf33_n
 #merge with transaction labels so each rule gets a category assignment
 DataFrame_pruned.rules_lhs1_conf33_no_sig = merge(DataFrame_pruned.rules_lhs1_conf33_no_sig, transDataLabels, by.x = "LHS", by.y = "LHS_label")
 DataFrame_pruned.rules_lhs1_conf33_no_sig$Cat = factor(DataFrame_pruned.rules_lhs1_conf33_no_sig$Cat)
-
-#get crosstab table for rule categories to summarize rules
-xtab_pruned.rules_lhs1_conf33_no_sig = xtabs(~Cat, data = DataFrame_pruned.rules_lhs1_conf33_no_sig)
 
 #write out data
 write.csv(DataFrame_pruned.rules_lhs1_conf33_no_sig, file = "ResultsOutput/indQ_LOC-NO_lhs1_conf33.csv", row.names = FALSE)
@@ -1104,41 +1188,47 @@ pruned.rules_lhs2_conf50_no = rules_lhs2_conf50_no[!is.redundant(rules_lhs2_conf
 
 #add odds ratio, chi-square and its pvalue, and fisher to the rules information
 quality(pruned.rules_lhs2_conf50_no) = cbind(quality(pruned.rules_lhs2_conf50_no), 
-                                                  oddsRatio = interestMeasure(pruned.rules_lhs2_conf50_no, 
-                                                                              measure = "oddsRatio", 
-                                                                              transactions = LOC_arules_trans),
-                                                  chi.sq = interestMeasure(pruned.rules_lhs2_conf50_no, 
-                                                                           measure = "chiSquared",
-                                                                           transactions = LOC_arules_trans),
-                                                  chi.sq.p = interestMeasure(pruned.rules_lhs2_conf50_no, 
-                                                                             measure = "chiSquared", significance = TRUE,
-                                                                             transactions = LOC_arules_trans),
-                                                  fisher.p = interestMeasure(pruned.rules_lhs2_conf50_no, 
-                                                                             measure = "fishersExactTest",
-                                                                             transactions = LOC_arules_trans))
+  oddsRatio = interestMeasure(pruned.rules_lhs2_conf50_no, 
+    measure = "oddsRatio", 
+    transactions = LOC_arules_trans),
+  addVal = interestMeasure(pruned.rules_lhs2_conf50_no, 
+    measure = "addedValue", 
+    transactions = LOC_arules_trans),
+  kappa = interestMeasure(pruned.rules_lhs2_conf50_no, 
+    measure = "kappa", 
+    transactions = LOC_arules_trans),
+  fisher.p = interestMeasure(pruned.rules_lhs2_conf50_no, 
+    measure = "fishersExactTest",
+    transactions = LOC_arules_trans))
 
 #no subset--all rules ####
 #remove empty rules
 pruned.rules_lhs2_conf50_no_all = subset(pruned.rules_lhs2_conf50_no, subset = size(lhs(pruned.rules_lhs2_conf50_no))!=0)
 
-#add adjusted pvalues to rules information--adjusting for all rules here, not just subset
-quality(pruned.rules_lhs2_conf50_no_all) = cbind(quality(pruned.rules_lhs2_conf50_no_all), 
-                                                  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs2_conf50_no_all)$fisher.p, method = 'holm'), 4))
-#sort
-pruned.rules_lhs2_conf50_no_all = sort(pruned.rules_lhs2_conf50_no_all, by=c("fisher.p", "fisher.padj_holm"), decreasing = FALSE)
+#check added value and correlation
+pruned.rules_lhs2_conf50_no_all_qdat = data.frame(quality(pruned.rules_lhs2_conf50_no_all))
+nrow(pruned.rules_lhs2_conf50_no_all_qdat[pruned.rules_lhs2_conf50_no_all_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs2_conf50_no_all_qdat[pruned.rules_lhs2_conf50_no_all_qdat$addVal >=0.05, ])
 
-#get only those with sig uncorrected fisher
-pruned.rules_lhs2_conf50_no_red = pruned.rules_lhs2_conf50_no_all[1:330]
+pruned.rules_lhs2_conf50_no_red = subset(pruned.rules_lhs2_conf50_no_all, quality(pruned.rules_lhs2_conf50_no_all)[8]>=0.20)
+pruned.rules_lhs2_conf50_no_red = subset(pruned.rules_lhs2_conf50_no_red, quality(pruned.rules_lhs2_conf50_no_red)[7]>=0.05)
+
+#add adjusted pvalues to rules information--adjusting for all rules here, not just subset
+quality(pruned.rules_lhs2_conf50_no_red) = cbind(quality(pruned.rules_lhs2_conf50_no_red), 
+  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs2_conf50_no_red)$fisher.p, method = 'holm'), 4))
+
+#sort
+pruned.rules_lhs2_conf50_no_red = sort(pruned.rules_lhs2_conf50_no_red, by=c("fisher.p", "fisher.padj_holm"), decreasing = FALSE)
 
 #get odds ration confidence intervals for those with significant fisher 
 OR_CI_pruned.rules_lhs2_conf50_no = ARM_ORconf(pruned.rules_lhs2_conf50_no_red, LOC_arules, 2, "No")
 
 quality(pruned.rules_lhs2_conf50_no_red) = cbind(quality(pruned.rules_lhs2_conf50_no_red),
-                                                      OR_CI_pruned.rules_lhs2_conf50_no[4:5])
+  OR_CI_pruned.rules_lhs2_conf50_no[4:5])
 quality(pruned.rules_lhs2_conf50_no_red) = quality(pruned.rules_lhs2_conf50_no_red)[c(4, 1:3, 5:7, 10:11, 8:9)]
 
 ### clusters loc-no 2, conf=.50, sup = 0.23 (1/3) to ####
-#get matrix information for final set (holm sig/trend)
+#get matrix information for final set
 im_lhs2_conf50_no_nosubset = quality(pruned.rules_lhs2_conf50_no_red)
 
 #clustering Rules lhs2 conf50_no lhs1 sig chi
@@ -1146,51 +1236,52 @@ dist_pruned.rules_lhs2_conf50_no = dissimilarity(pruned.rules_lhs2_conf50_no_red
 
 ## mediods partitioning--determine number of clusters ####
 #within cluster sums of squares--look for elbow in graph
-pruned.rules_lhs2_conf50_no_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_no), cluster::pam, method = "wss", k.max=25)+ geom_vline(xintercept = 2, linetype = 3)+labs(subtitle = "Elbow method")
+pruned.rules_lhs2_conf50_no_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_no), cluster::pam, method = "wss", k.max=10)+ geom_vline(xintercept = 3, linetype = 3)+labs(subtitle = "Elbow method")
 
 #silhouette width
-pruned.rules_lhs2_conf50_no_nclustSil = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_no), cluster::pam, method = "silhouette", k.max=25)+ labs(subtitle = "Silhouette method")
+pruned.rules_lhs2_conf50_no_nclustSil = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_no), cluster::pam, method = "silhouette", k.max=10)+ labs(subtitle = "Silhouette method")
 
 #get combind plot
-pruned.rules_lhs2_conf50_no_nclustPlotGrid = plot_grid(pruned.rules_lhs2_conf50_no_nclustSSW, pruned.rules_lhs2_conf50_no_nclustSil, labels = c("", ""))
+#pruned.rules_lhs2_conf50_no_nclustPlotGrid = plot_grid(pruned.rules_lhs2_conf50_no_nclustSSW, pruned.rules_lhs2_conf50_no_nclustSil, labels = c("", ""))
 
 #test internal validity metrics
-#pruned.rules_lhs2_conf50_no_nclust_internV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_no), 2:10, clMethods=c("pam"), validation="internal", maxitems = 330)
+#pruned.rules_lhs2_conf50_no_nclust_internV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_no), 2:5, clMethods=c("pam"), validation="internal")
 
 #test stability metrics (remove one collumn at a time sequentially and look at stability)
-#pruned.rules_lhs2_conf50_no_nclust_stabV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_no), 2:10, clMethods=c("pam"), validation="stability")
+#pruned.rules_lhs2_conf50_no_nclust_stabV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_no), 2:5, clMethods=c("pam"), validation="stability")
 
 #cluster validity table
 
-pruned.rules_lhs2_conf50_no_nclust_Vsum = data.frame(matrix(c("Connectivity", 84.8603,    "pam", 3,
-                                                                "Dunn",         0.1768,    "pam", 5,
-                                                                "Silhouette",   0.2611,    "pam", 10,
-                                                                "APN",          0.0173,    "pam", 4,
-                                                                "AD",           1.7326,    "pam", 10,
-                                                                "ADM",          0.0414,    "pam", 4,
-                                                                "FOM",          0.0724,    "pam", 10), 
-                                                              byrow = TRUE, nrow = 7, ncol = 4))
-names(pruned.rules_lhs2_conf50_no_nclust_Vsum) = c("measure", "score_at3", "method", "clusters")                                               
+pruned.rules_lhs2_conf50_no_nclust_Vsum = data.frame(matrix(c("Connectivity", 6.2036,    "pam", 2,
+  "Dunn",         0.8895,    "pam", 3,
+  "Silhouette",   0.4766,    "pam", 3,
+  "APN",          0.0871,    "pam", 4,
+  "AD",           0.2980,    "pam", 5,
+  "ADM",          0.0905,    "pam", 4,
+  "FOM",          0.0810,    "pam", 5), 
+  byrow = TRUE, nrow = 7, ncol = 4))
+names(pruned.rules_lhs2_conf50_no_nclust_Vsum) = c("measure", "score_at3", "method", "clusters") 
+
 ## run pam to get cluster membership ####
-pruned.rules_lhs2_conf50_no_4clust = pam(dist_pruned.rules_lhs2_conf50_no, diss = TRUE, k=4)
+pruned.rules_lhs2_conf50_no_3clust = pam(dist_pruned.rules_lhs2_conf50_no, diss = TRUE, k=3)
 
 #silhouette widths
-pruned.rules_lhs2_conf50_no_4clust_asw = data.frame(c(1, 2, 3, 4), pruned.rules_lhs2_conf50_no_4clust$silinfo$clus.avg.widths)
-names(pruned.rules_lhs2_conf50_no_4clust_asw) = c("cluster", "asw")
+pruned.rules_lhs2_conf50_no_3clust_asw = data.frame(c(1, 2, 3), pruned.rules_lhs2_conf50_no_3clust$silinfo$clus.avg.widths)
+names(pruned.rules_lhs2_conf50_no_3clust_asw) = c("cluster", "asw")
 
 #add cluster belonging to  quality matrix
-im_lhs2_conf50_no_nosubset$clust_gupta4 = pruned.rules_lhs2_conf50_no_4clust$clustering
+im_lhs2_conf50_no_nosubset$clust_gupta3 = pruned.rules_lhs2_conf50_no_3clust$clustering
 
 #add to rules quality
-quality(pruned.rules_lhs2_conf50_no_red) = cbind(quality(pruned.rules_lhs2_conf50_no_red), Cluster_gupta4 = im_lhs2_conf50_no_nosubset$clust_gupta4)
+quality(pruned.rules_lhs2_conf50_no_red) = cbind(quality(pruned.rules_lhs2_conf50_no_red), Cluster_gupta3 = im_lhs2_conf50_no_nosubset$clust_gupta3)
 
 #convert rules to dataframe
 DataFrame_pruned.rules_lhs2_conf50_no_nosubset = DATAFRAME(pruned.rules_lhs2_conf50_no_red, separate = TRUE, setStart = '', itemSep = '+', setEnd = '')
 
 #need the following two split the LHS into 2 columns
 DataFrame_pruned.rules_lhs2_conf50_no_nosubset = with(DataFrame_pruned.rules_lhs2_conf50_no_nosubset, 
-                                                   cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_no_nosubset$LHS, "\\+", c('LHS1', 'LHS2')), 
-                                                         DataFrame_pruned.rules_lhs2_conf50_no_nosubset[2:14]))
+  cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_no_nosubset$LHS, "\\+", c('LHS1', 'LHS2')), 
+    DataFrame_pruned.rules_lhs2_conf50_no_nosubset[2:14]))
 
 
 #merge with transaction labels dataframe to get category labels for each rule in LHS1
@@ -1203,7 +1294,7 @@ names(DataFrame_pruned.rules_lhs2_conf50_no_nosubset)[16] = "Cat1"
 DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cat1 = factor(DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cat1)
 
 #merge with transaction labels dataframe to get category labels for each rule in LHS2
-DataFrame_pruned.rules_lhs2_conf50_no_nosubset = merge(DataFrame_pruned.rules_lhs2_conf50_no_nosubset, transDataLabels, by.x = "LHS2", by.y = "LHS_label")
+DataFrame_pruned.rules_lhs2_conf50_no_nosubset = merge(DataFrame_pruned.rules_lhs2_conf50_no_nosubset, transDataLabels, by.x = "LHS2", by.y = "LHS_label", all.x = TRUE)
 
 #rename variable so can add two category variabls
 names(DataFrame_pruned.rules_lhs2_conf50_no_nosubset)[17] = "Cat2"
@@ -1222,93 +1313,71 @@ write.csv(DataFrame_pruned.rules_lhs2_conf50_no_nosubset, file = "ResultsOutput/
 
 ## get crosstables for each cluster--4 cluster solution ####
 #--need to first subset and drop unsued levels then make table for each cluster
-#cluster 4-1
+#cluster 3-1
 #subset to just cluster 1
-pruned.rules_lhs2_conf50_no_nosubset_clust4.1 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta4 == 1, ]
+pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta3 == 1, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_no_nosubset_clust4.1$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.1$LHS1)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.1$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.1$LHS2)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.1$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.1$Cat1)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.1$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.1$Cat2)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.1$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.1$LHS1)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.1$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.1$LHS2)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.1$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.1$Cat1)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.1$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.1$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.1 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.1))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.1 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.1, 
-                                                         coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.1))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.1 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.1,
-                                                         rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.1))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.1_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.1))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.1_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.1))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.1 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.1_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.1_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
-#cluster 4-2
+#cluster 3-2
 #subset to just cluster 2
-pruned.rules_lhs2_conf50_no_nosubset_clust4.2 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta4 == 2, ]
+pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta3 == 2, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_no_nosubset_clust4.2$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.2$LHS1)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.2$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.2$LHS2)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.2$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.2$Cat1)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.2$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.2$Cat2)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.2$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.2$LHS1)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.2$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.2$LHS2)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.2$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.2$Cat1)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.2$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.2$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.2 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.2))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.2 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.2, 
-                                                          coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.2))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.2 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.2,
-                                                         rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.2))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.2_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.2))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.2_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.2))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.2 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.2_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.2_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
-#cluster 4-3
+#cluster 3-3
 #subset to just cluster 3
-pruned.rules_lhs2_conf50_no_nosubset_clust4.3 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta4 == 3, ]
+pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta3 == 3, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_no_nosubset_clust4.3$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.3$LHS1)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.3$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.3$LHS2)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.3$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.3$Cat1)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.3$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.3$Cat2)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.3$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.3$LHS1)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.3$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.3$LHS2)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.3$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.3$Cat1)
+pruned.rules_lhs2_conf50_no_nosubset_clust3.3$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.3$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.3 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.3))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.3 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.3, 
-                                                             coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.3))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.3 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.3,
-                                                            rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.3))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.3_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.3))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.3_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.3))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.3 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.3_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.3_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
-
-#cluster 4-4
-#subset to just cluster 4
-pruned.rules_lhs2_conf50_no_nosubset_clust4.4 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta4 == 4, ]
-
-#drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_no_nosubset_clust4.4$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.4$LHS1)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.4$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.4$LHS2)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.4$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.4$Cat1)
-pruned.rules_lhs2_conf50_no_nosubset_clust4.4$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust4.4$Cat2)
-
-#make cross tabs
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.4 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.4))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.4 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.4, 
-  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.4))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.4 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.4,
-  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.4))
-
-#get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.4_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.4))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.4_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust4.4))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.4 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.4_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.4_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
 
 write.csv(DataFrame_pruned.rules_lhs2_conf50_no_nosubset, file = "ResultsOutput/indQ_LOC-NO_lhs2_conf50_nosubset_clust.csv", row.names = FALSE)
@@ -1317,35 +1386,26 @@ write.csv(DataFrame_pruned.rules_lhs2_conf50_no_nosubset, file = "ResultsOutput/
 
 #***subset to holm sig from lhs1 (based on holm sig trend decision) ####
 #get the subset of rules
-pruned.rules_lhs2_conf50_no_lhs1_holm_sig = subset(pruned.rules_lhs2_conf50_no, subset=lhs %in% lhs1_conf33_no_vars_fdr_holm_sig)
-
-#add in adjusted pvalues for the subset to rules information
-quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig) = cbind(quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig), 
-                                                                fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig)$fisher.p, method = 'holm'), 4))
-#sort
-pruned.rules_lhs2_conf50_no_lhs1_holm_sig = sort(pruned.rules_lhs2_conf50_no_lhs1_holm_sig, by=c("fisher.p", "fisher.padj_holm"), decreasing = FALSE)
-
-#get list of significant rules
-pruned.rules_lhs2_conf50_no_lhs1_holm_sig_red = pruned.rules_lhs2_conf50_no_lhs1_holm_sig[1:61]
+pruned.rules_lhs2_conf50_no_lhs1_holm_sig = subset(pruned.rules_lhs2_conf50_no_red, subset=lhs %in% lhs1_conf33_no_vars_holm_sig)
 
 #get Odds Ratio CIs
-OR_CI_pruned.rules_lhs2_conf50_no_lhs1_holm_sig = ARM_ORconf(pruned.rules_lhs2_conf50_no_lhs1_holm_sig_red, LOC_arules, 2, "No")
+OR_CI_pruned.rules_lhs2_conf50_no_lhs1_holm_sig = ARM_ORconf(pruned.rules_lhs2_conf50_no_lhs1_holm_sig, LOC_arules, 2, "No")
 
 #add Odds Ratio CIS to rules and organize rules
-quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig_red) = cbind(quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig_red),
-                                                                    OR_CI_pruned.rules_lhs2_conf50_no_lhs1_holm_sig[4:5])
-quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig_red) = quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig_red)[c(4, 1:3, 5:7, 10:11, 8:9)]
+quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig) = cbind(quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig),
+  OR_CI_pruned.rules_lhs2_conf50_no_lhs1_holm_sig[4:5])
+quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig) = quality(pruned.rules_lhs2_conf50_no_lhs1_holm_sig)[c(4, 1:3, 5:7, 10:11, 8:9)]
 
 #get Dataframe
-DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig = DATAFRAME(pruned.rules_lhs2_conf50_no_lhs1_holm_sig_red, separate = TRUE, setStart = '', itemSep = '+', setEnd = '')
+DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig = DATAFRAME(pruned.rules_lhs2_conf50_no_lhs1_holm_sig, separate = TRUE, setStart = '', itemSep = '+', setEnd = '')
 
 #need the following two split the LHS into 2 columns
 DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig = with(DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig, 
-                                                                     cbind(colsplit(DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig$LHS, "\\+", c('LHS1', 'LHS2')), 
-                                                                           DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig[2:13]))
+  cbind(colsplit(DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig$LHS, "\\+", c('LHS1', 'LHS2')), 
+    DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig[2:13]))
 
 #this is because a single predictor was repeated in LHS2 during the split and it shouldn't have
-DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig$LHS2[7] = NA
+DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig$LHS2[5] = NA
 
 #merge
 DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig = merge(DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig, transDataLabels, by.x = "LHS1", by.y = "LHS_label")
@@ -1365,15 +1425,6 @@ DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig$OR_ExceedCI = ifelse(Da
 #reduce to final ones
 write.csv(DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig, file = "ResultsOutput/indQ_LOC-NO_lhs2_conf50_additive.csv", row.names = FALSE)
 
-## CEBQ34_gRarely+CEBQ7=Sometimes ####
-LOC_arules$cebq7_Sometimes = ifelse(LOC_arules$cebq7 == "Sometimes", TRUE, FALSE)
-CEBQ34.CEBQ7_logit = glm(loc1~cebq34_gRarely*cebq7_Sometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CEBQ34.CEBQ7_sum = summary(CEBQ34.CEBQ7_logit)
-CEBQ34.CEBQ7_coef = coef(CEBQ34.CEBQ7_sum)[2:4, ]
-CEBQ34.CEBQ7_OR = exp(coef(CEBQ34.CEBQ7_sum)[2:4,1:2])
-CEBQ34.CEBQ7_tab = data.frame(CEBQ34.CEBQ7_coef, CEBQ34.CEBQ7_OR)
-colnames(CEBQ34.CEBQ7_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
-
 ### trace transactions matching rules to participants ####
 st_pruned.rules_lhs2_conf50_no = supportingTransactions(pruned.rules_lhs2_conf50_no_red, LOC_arules_trans)
 indQ_IDmatch_trans_no = data.frame(LOC_ndup[!is.na(LOC_ndup$loc1), ]$StudyID, rownames(LOC_arules), LOC_ndup[!is.na(LOC_ndup$loc1), ]$loc1)
@@ -1381,15 +1432,15 @@ indQ_IDmatch_rules_no = data.frame(indQ_IDmatch_trans_no, t(as(st_pruned.rules_l
 names(indQ_IDmatch_rules_no)[1:3] = c('StudyID', "TransID", "LOC")
 indQ_IDmatch_rules_no = indQ_IDmatch_rules_no[indQ_IDmatch_rules_no$LOC == 'No' & !is.na(indQ_IDmatch_rules_no$LOC), ]
 
-for(c in 4:121){
+for(c in 4:19){
   indQ_IDmatch_rules_no[[c]] = ifelse(indQ_IDmatch_rules_no[[c]] == "TRUE", 1, 0)
 }
 
-indQ_IDmatch_rules_no$nRulesTrue = rowSums(indQ_IDmatch_rules_no[,4:333])
+indQ_IDmatch_rules_no$nRulesTrue = rowSums(indQ_IDmatch_rules_no[,4:19])
 indQ_n_noRule = nrow(indQ_IDmatch_rules_no[indQ_IDmatch_rules_no$nRulesTrue == 0, ])
 
 indQ_endorse_LOC_conf50_no = ggplot(indQ_IDmatch_rules_no, aes(x = nRulesTrue))+
-  geom_histogram(aes(y = ..density..), binwidth = 10, color = "grey30", fill = "white") +
+  geom_histogram(aes(y = ..density..), binwidth = 2, color = "grey30", fill = "white") +
   geom_density(alpha = .2, fill = "antiquewhite3")+
   labs(x="Number of Rules Matched")+
   theme(panel.border = element_blank(), panel.grid.major = element_blank(),
@@ -1401,20 +1452,22 @@ indQ_endorse_LOC_conf50_no = ggplot(indQ_IDmatch_rules_no, aes(x = nRulesTrue))+
 ####      ALL LOC STEP 1 INCLUDED (CFQ 26 = ‘Disagree’, CFQ 20 = ‘Agree’, and CEBQ 34 > ‘Rarely’)      ####
 ###############################################
 
-##HighRisk/Protective (n=91), has at least 2; loc-no1 (n = 6150% of no LOC sample), sup = 0.17 (25%=15), conf=50####
-#subset to those that meet above criteria
-LOC_arules$HR = ifelse(!is.na(LOC_arules$cfq26_Disagree) & LOC_arules$cfq26_Disagree == TRUE, 'Yes',
-    ifelse(!is.na(LOC_arules$cfq28_Disagree) & LOC_arules$cfq28_Disagree == TRUE, 'Yes',
-      ifelse(LOC_arules$cebq34_gRarely == TRUE, 'Yes', 'No')))
+##HighRisk/Protective (n=70), loc-no (n = 42, 35% of no LOC sample), sup = 0.15 (25%=11), conf=33####
+#subset to those that had opposites predicting no LOC: cebq34_gRarely, mEducation_HS, cfq23_lsNeutralAD
 
+LOC_arules$HR = ifelse(!is.na(LOC_arules$cebq34_gRarely) & LOC_arules$cebq34_gRarely == TRUE, 'Yes',
+  ifelse(!is.na(LOC_arules$mEducation_HS) & LOC_arules$mEducation_HS == TRUE, 'Yes',
+    ifelse(!is.na(LOC_arules$cfq23_lsNeutralAD) & LOC_arules$cfq23_lsNeutralAD == TRUE, 'Yes', 'No')))
+
+    
 LOC_arules_HRall = LOC_arules[LOC_arules$HR == 'Yes', ]
 
 #convert data to transactions (dichotomize)
 LOC_arules_trans_HRall = as(LOC_arules_HRall[1:287], "transactions")
 
 #get rules
-rules_lhs1_conf33_HRallno = apriori(LOC_arules_trans_HRall, parameter = list(maxlen = 2, supp = 0.17, conf = 0.33), 
-                                      appearance = list(default="lhs", rhs="loc1=No"))
+rules_lhs1_conf33_HRallno = apriori(LOC_arules_trans_HRall, parameter = list(maxlen = 2, supp = 0.15, conf = 0.33), 
+  appearance = list(default="lhs", rhs="loc1=No"))
 
 #prune rules that are redundant-more important for multiple predictors as may get two rules with 
 #different predictor order, thus are the same
@@ -1422,37 +1475,44 @@ pruned.rules_lhs1_conf33_HRallno = rules_lhs1_conf33_HRallno[!is.redundant(rules
 
 #add odds ratio, chi-squre and its p, and fisher to rules information
 quality(pruned.rules_lhs1_conf33_HRallno) = cbind(quality(pruned.rules_lhs1_conf33_HRallno), 
-                                                    oddsRatio = interestMeasure(pruned.rules_lhs1_conf33_HRallno, 
-                                                                                measure = "oddsRatio", 
-                                                                                transactions = LOC_arules_trans_HRall),
-                                                    chi.sq = interestMeasure(pruned.rules_lhs1_conf33_HRallno, 
-                                                                             measure = "chiSquared",
-                                                                             transactions = LOC_arules_trans_HRall),
-                                                    chi.sq.p = interestMeasure(pruned.rules_lhs1_conf33_HRallno, 
-                                                                               measure = "chiSquared", significance = TRUE,
-                                                                               transactions = LOC_arules_trans_HRall),
-                                                    fisher.p = interestMeasure(pruned.rules_lhs1_conf33_HRallno, 
-                                                                               measure = "fishersExactTest",
-                                                                               transactions = LOC_arules_trans_HRall))
+  oddsRatio = interestMeasure(pruned.rules_lhs1_conf33_HRallno, 
+    measure = "oddsRatio", 
+    transactions = LOC_arules_trans_HRall),
+  addVal = interestMeasure(pruned.rules_lhs1_conf33_HRallno, 
+    measure = "addedValue", 
+    transactions = LOC_arules_trans_HRall),
+  kappa = interestMeasure(pruned.rules_lhs1_conf33_HRallno, 
+    measure = "kappa", 
+    transactions = LOC_arules_trans_HRall),
+  fisher.p = interestMeasure(pruned.rules_lhs1_conf33_HRallno, 
+    measure = "fishersExactTest",
+    transactions = LOC_arules_trans_HRall))
+
 #remove empty rules
 pruned.rules_lhs1_conf33_HRallno = subset(pruned.rules_lhs1_conf33_HRallno, subset = size(lhs(pruned.rules_lhs1_conf33_HRallno))!=0)
 
+#check added value and correlation
+pruned.rules_lhs1_conf33_HRallno_qdat = data.frame(quality(pruned.rules_lhs1_conf33_HRallno))
+nrow(pruned.rules_lhs1_conf33_HRallno_qdat[pruned.rules_lhs1_conf33_HRallno_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs1_conf33_HRallno_qdat[pruned.rules_lhs1_conf33_HRallno_qdat$addVal >=0.05, ])
+
+pruned.rules_lhs1_conf33_HRallno_red = subset(pruned.rules_lhs1_conf33_HRallno, quality(pruned.rules_lhs1_conf33_HRallno)[8]>=0.20)
+pruned.rules_lhs1_conf33_HRallno_red = subset(pruned.rules_lhs1_conf33_HRallno_red, quality(pruned.rules_lhs1_conf33_HRallno_red)[7]>=0.05)
+
+
 #add multiple comparison correction
-quality(pruned.rules_lhs1_conf33_HRallno) = cbind(quality(pruned.rules_lhs1_conf33_HRallno), 
-                                                    fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs1_conf33_HRallno)$fisher.p, method = 'holm'), 4))
+quality(pruned.rules_lhs1_conf33_HRallno_red) = cbind(quality(pruned.rules_lhs1_conf33_HRallno_red), 
+  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs1_conf33_HRallno_red)$fisher.p, method = 'holm'), 4))
 
 #sort rules
-pruned.rules_lhs1_conf33_HRallno = sort(pruned.rules_lhs1_conf33_HRallno, by=c("fisher.padj_holm", "fisher.p"), decreasing = FALSE)
-
-#reduce to significant
-pruned.rules_lhs1_conf33_HRallno_red = pruned.rules_lhs1_conf33_HRallno[1:10]
+pruned.rules_lhs1_conf33_HRallno_red = sort(pruned.rules_lhs1_conf33_HRallno_red, by=c("fisher.padj_holm", "fisher.p"), decreasing = FALSE)
 
 #get confidence intervals for odds ratios
 OR_CI_pruned.rules_lhs1_conf33_HRallno = ARM_ORconf(pruned.rules_lhs1_conf33_HRallno_red, LOC_arules_HRall, 1, "No")
 
 #add confidence intervals to rules information
 quality(pruned.rules_lhs1_conf33_HRallno_red) = cbind(quality(pruned.rules_lhs1_conf33_HRallno_red),
-                                                    OR_CI_pruned.rules_lhs1_conf33_HRallno[3:4])
+  OR_CI_pruned.rules_lhs1_conf33_HRallno[3:4])
 
 #organize columns
 quality(pruned.rules_lhs1_conf33_HRallno_red) = quality(pruned.rules_lhs1_conf33_HRallno_red)[c(4, 1:3, 5:7, 10:11, 8:9)]
@@ -1469,104 +1529,116 @@ xtab_pruned.rules_lhs1_conf33_no_sig = xtabs(~Cat, data = DataFrame_pruned.rules
 write.csv(DataFrame_pruned.rules_lhs1_conf33_HRallno_sig, file = "ResultsOutput/indQ_LOC-HR_NO_lhs1_conf33.csv", row.names = TRUE)
 
 
-##HighRisk/Protective (n=91), has at least 2; loc-no2 (61), sup = 0.22 (33%=20), conf=50####
-rules_lhs2_conf50_HRallno = apriori(LOC_arules_trans_HRall, parameter = list(maxlen = 3, supp = 0.22, conf = 0.50), 
-                                    appearance = list(default="lhs", rhs="loc1=No"))
+##HighRisk/Protective (n=91), has at least 2; loc-no2 (61), sup = 0.20 (33%=14), conf=50####
+rules_lhs2_conf50_HRallno = apriori(LOC_arules_trans_HRall, parameter = list(maxlen = 3, supp = 0.20, conf = 0.50), 
+  appearance = list(default="lhs", rhs="loc1=No"))
 
 pruned.rules_lhs2_conf50_HRallno = rules_lhs2_conf50_HRallno[!is.redundant(rules_lhs2_conf50_HRallno)]
 
 quality(pruned.rules_lhs2_conf50_HRallno) = cbind(quality(pruned.rules_lhs2_conf50_HRallno), 
-                                                  oddsRatio = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
-                                                                              measure = "oddsRatio", 
-                                                                              transactions = LOC_arules_trans_HRall),
-                                                  chi.sq = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
-                                                                           measure = "chiSquared",
-                                                                           transactions = LOC_arules_trans_HRall),
-                                                  chi.sq.p = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
-                                                                             measure = "chiSquared", significance = TRUE,
-                                                                             transactions = LOC_arules_trans_HRall),
-                                                  fisher.p = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
-                                                                        measure = "fishersExactTest",
-                                                                        transactions = LOC_arules_trans_HRall))
+  oddsRatio = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
+    measure = "oddsRatio", 
+    transactions = LOC_arules_trans_HRall),
+  addVal = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
+    measure = "addedValue", 
+    transactions = LOC_arules_trans_HRall),
+  kappa = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
+    measure = "kappa", 
+    transactions = LOC_arules_trans_HRall),
+  kappa = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
+    measure = "kappa", 
+    transactions = LOC_arules_trans_HRall),
+  fisher.p = interestMeasure(pruned.rules_lhs2_conf50_HRallno, 
+    measure = "fishersExactTest",
+    transactions = LOC_arules_trans_HRall))
+
 #remove empty rules
 pruned.rules_lhs2_conf50_HRallno = subset(pruned.rules_lhs2_conf50_HRallno, subset = size(lhs(pruned.rules_lhs2_conf50_HRallno))!=0)
 
+#check added value and correlation
+pruned.rules_lhs2_conf50_HRallno_qdat = data.frame(quality(pruned.rules_lhs2_conf50_HRallno))
+nrow(pruned.rules_lhs2_conf50_HRallno_qdat[pruned.rules_lhs2_conf50_HRallno_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs2_conf50_HRallno_qdat[pruned.rules_lhs2_conf50_HRallno_qdat$addVal >=0.05, ])
+
+pruned.rules_lhs2_conf50_HRallno_red = subset(pruned.rules_lhs2_conf50_HRallno, quality(pruned.rules_lhs2_conf50_HRallno)[8]>=0.20)
+pruned.rules_lhs2_conf50_HRallno_red = subset(pruned.rules_lhs2_conf50_HRallno_red, quality(pruned.rules_lhs2_conf50_HRallno_red)[7]>=0.05)
+
+
 #add multiple comparison to rules information
-quality(pruned.rules_lhs2_conf50_HRallno) = cbind(quality(pruned.rules_lhs2_conf50_HRallno), 
-                                                  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs2_conf50_HRallno)$fisher.p, method = 'holm'), 4))
+quality(pruned.rules_lhs2_conf50_HRallno_red) = cbind(quality(pruned.rules_lhs2_conf50_HRallno_red), 
+  fisher.padj_holm = round(p.adjust(quality(pruned.rules_lhs2_conf50_HRallno_red)$fisher.p, method = 'holm'), 4))
 
 #sort rules
-pruned.rules_lhs2_conf50_HRallno = sort(pruned.rules_lhs2_conf50_HRallno, by=c("fisher.padj_holm", "fisher.p"), decreasing = FALSE)
+pruned.rules_lhs2_conf50_HRallno_red = sort(pruned.rules_lhs2_conf50_HRallno_red, by=c("fisher.padj_holm", "fisher.p"), decreasing = FALSE)
 
 #reduce to significant
-pruned.rules_lhs2_conf50_HRallno_red = pruned.rules_lhs2_conf50_HRallno[1:552]
+pruned.rules_lhs2_conf50_HRallno_redsig = pruned.rules_lhs2_conf50_HRallno[1:255]
 
 #get confidence intervals for odds ratios
-OR_CI_pruned.rules_lhs2_conf50_HRallno = ARM_ORconf(pruned.rules_lhs2_conf50_HRallno_red, LOC_arules_HRall, 2, "No")
+OR_CI_pruned.rules_lhs2_conf50_HRallno = ARM_ORconf(pruned.rules_lhs2_conf50_HRallno_redsig, LOC_arules_HRall, 2, "No")
 
 #add confidence interval information to rules information
-quality(pruned.rules_lhs2_conf50_HRallno_red) = cbind(quality(pruned.rules_lhs2_conf50_HRallno_red),
-                                                  OR_CI_pruned.rules_lhs2_conf50_HRallno[3:4])
+quality(pruned.rules_lhs2_conf50_HRallno_redsig) = cbind(quality(pruned.rules_lhs2_conf50_HRallno_redsig),
+  OR_CI_pruned.rules_lhs2_conf50_HRallnosig[3:4])
 
 #organize columns
-quality(pruned.rules_lhs2_conf50_HRallno_red) = quality(pruned.rules_lhs2_conf50_HRallno_red)[c(4, 1:3, 5:7, 10:11, 8:9)]
+quality(pruned.rules_lhs2_conf50_HRallno_redsig) = quality(pruned.rules_lhs2_conf50_HRallno_redsig)[c(4, 1:3, 5:7, 10:11, 8:9)]
 
 ### High Risk clusters loc-no 2, conf=.50, sup = 0.23 (1/3) to ####
 #get matrix information for final set (holm sig/trend)
-im_matrix_lhs2_conf50_HRallno = quality(pruned.rules_lhs2_conf50_HRallno_red)
+im_matrix_lhs2_conf50_HRallno = quality(pruned.rules_lhs2_conf50_HRallno_redsig)
 row.names(im_matrix_lhs2_conf50_HRallno) = seq(1, nrow(im_matrix_lhs2_conf50_HRallno), by=1)
 
 #clustering Rules lhs2 conf50 lhs1 sig chi
-dist_pruned.rules_lhs2_conf50_HRallno_gupta = dissimilarity(pruned.rules_lhs2_conf50_HRallno_red, args = list(transactions = LOC_arules_trans_HRall), method = "gupta")
+dist_pruned.rules_lhs2_conf50_HRallno_gupta = dissimilarity(pruned.rules_lhs2_conf50_HRallno_redsig, args = list(transactions = LOC_arules_trans_HRall), method = "gupta")
 
 ## mediods partitioning--determine number of clusters ####
 #within cluster sums of squares--look for elbow in graph
-pruned.rules_lhs2_conf50_noHR_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), cluster::pam, method = "wss", k.max=25)+ geom_vline(xintercept = 2, linetype = 3)+labs(subtitle = "Elbow method")
+pruned.rules_lhs2_conf50_noHR_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), cluster::pam, method = "wss", k.max=15)+ geom_vline(xintercept = 7, linetype = 3)+labs(subtitle = "Elbow method")
 
 #silhouette width
-pruned.rules_lhs2_conf50_noHR_nclustSil = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), cluster::pam, method = "silhouette", k.max=25)+ labs(subtitle = "Silhouette method")
+pruned.rules_lhs2_conf50_noHR_nclustSil = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), cluster::pam, method = "silhouette", k.max=15)+ labs(subtitle = "Silhouette method")
 
 #get combind plot
 pruned.rules_lhs2_conf50_noHR_nclustPlotGrid = plot_grid(pruned.rules_lhs2_conf50_noHR_nclustSSW, pruned.rules_lhs2_conf50_noHR_nclustSil, labels = c("", ""))
 
 #test internal validity metrics
-pruned.rules_lhs2_conf50_noHR_nclust_internV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), 2:25, clMethods=c("pam"), validation="internal", maxitems = 620)
+pruned.rules_lhs2_conf50_noHR_nclust_internV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), 2:10, clMethods=c("pam"), validation="internal")
 
 #test stability metrics (remove one collumn at a time sequentially and look at stability)
-pruned.rules_lhs2_conf50_noHR_nclust_stabV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), 2:25, clMethods=c("pam"), validation="stability")
+pruned.rules_lhs2_conf50_noHR_nclust_stabV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), 2:10, clMethods=c("pam"), validation="stability")
 
 #cluster validity table
-#pruned.rules_lhs2_conf50_noHR_nclust_Vsum = rbind(optimalScores(pruned.rules_lhs2_conf50_noHR_nclust_internV), optimalScores(pruned.rules_lhs2_conf50_noHR_nclust_stabV))
-pruned.rules_lhs2_conf50_noHR_nclust_Vsum = data.frame(matrix(c("Connectivity", 1.083770e+02,    "pam",        2, 2,
-                                                                "Dunn",         1.695354e-01,    "pam",       19, 10,
-                                                                "Silhouette",   2.990480e-01,    "pam",       23, 10,
-                                                                "APN",          2.050165e-03,    "pam",       21, 5,
-                                                                "AD",           1.911433e+00,    "pam",       25, 10,
-                                                                "ADM",          6.638916e-03,    "pam",       21, 5,
-                                                                "FOM",          6.022308e-02,    "pam",       25, 10), 
-                                                              byrow = TRUE, nrow = 7, ncol = 5))
-names(pruned.rules_lhs2_conf50_noHR_nclust_Vsum) = c("measure", "score", "method", "clusters", "clusters10")
+pruned.rules_lhs2_conf50_noHR_nclust_Vsum = data.frame(matrix(c("Connectivity", 57.8663,    "pam",      2,
+  "Dunn",         0.1302,    "pam",       7,
+  "Silhouette",   0.2781,    "pam",       9,
+  "APN",          0.0016,    "pam",       10,
+  "AD",           2.3725,    "pam",       10,
+  "ADM",          0.0060,    "pam",       10,
+  "FOM",          0.0760,    "pam",       10), 
+  byrow = TRUE, nrow = 7, ncol = 4))
+names(pruned.rules_lhs2_conf50_noHR_nclust_Vsum) = c("measure", "score", "method", "clusters")
 
 ## run pam to get cluster membership ####
-pruned.rules_lhs2_conf50_noHR_5clust = pam(dist_pruned.rules_lhs2_conf50_HRallno_gupta, diss = TRUE, k=5)
+pruned.rules_lhs2_conf50_noHR_7clust = pam(dist_pruned.rules_lhs2_conf50_HRallno_gupta, diss = TRUE, k=7)
 
 #silhouette widths
-pruned.rules_lhs2_conf50_noHR_5clust_asw = data.frame(c(1, 2, 3, 4, 5), pruned.rules_lhs2_conf50_noHR_5clust$silinfo$clus.avg.widths)
-names(pruned.rules_lhs2_conf50_noHR_5clust_asw) = c("cluster", "asw")
+pruned.rules_lhs2_conf50_noHR_7clust_asw = data.frame(c(1, 2, 3, 4, 5, 6, 7), pruned.rules_lhs2_conf50_noHR_7clust$silinfo$clus.avg.widths)
+names(pruned.rules_lhs2_conf50_noHR_7clust_asw) = c("cluster", "asw")
 
 #add cluster belonging to  quality matrix
-im_matrix_lhs2_conf50_HRallno$clust_gupta5 = pruned.rules_lhs2_conf50_noHR_5clust$clustering
+im_matrix_lhs2_conf50_HRallno$clust_gupta7 = pruned.rules_lhs2_conf50_noHR_7clust$clustering
 
 #add to rules quality
-quality(pruned.rules_lhs2_conf50_HRallno_red) = cbind(quality(pruned.rules_lhs2_conf50_HRallno_red), Cluster_gupta5 = im_matrix_lhs2_conf50_HRallno$clust_gupta5)
+quality(pruned.rules_lhs2_conf50_HRallno_red) = cbind(quality(pruned.rules_lhs2_conf50_HRallno_red), Cluster_gupta7 = im_matrix_lhs2_conf50_HRallno$clust_gupta7)
 
 #convert rules to dataframe
 DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset = DATAFRAME(pruned.rules_lhs2_conf50_HRallno_red, separate = TRUE, setStart = '', itemSep = '+', setEnd = '')
 
 #need the following two split the LHS into 2 columns
 DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset = with(DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset, 
-                                                      cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$LHS, "\\+", c('LHS1', 'LHS2')), 
-                                                            DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[2:14]))
+  cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$LHS, "\\+", c('LHS1', 'LHS2')), 
+    DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[2:14]))
 
 
 #merge with transaction labels dataframe to get category labels for each rule in LHS1
@@ -1591,127 +1663,172 @@ DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cat2 = factor(DataFrame_pruned.
 xtabs_pruned.rules_lhs2_conf50_noHR_nosubset = xtabs(~Cat1 + Cat2, data = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset)
 
 #look at cluster overlap
-xtabsClust_pruned.rules_lhs2_conf50_noHR_nosubset = xtabs(~Cluster_gupta5, data = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset)
+xtabsClust_pruned.rules_lhs2_conf50_noHR_nosubset = xtabs(~Cluster_gupta7, data = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset)
 
 #write out if want
-#write.table(DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset, file = "ResultsOutput/indQ_LOC-NO.HR_lhs2_conf50_nosubset.csv", sep = ",")
+write.csv(DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset, file = "ResultsOutput/indQ_LOC-NO.HR_lhs2_conf50_nosubset.csv", row.names = FALSE)
 
 ## get crosstables for each cluster--5 cluster solution ####
 #--need to first subset and drop unsued levels then make table for each cluster
-#cluster 5-1
+#cluster 7-1
 #subset to just cluster 1
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta5 == 1, ]
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta7 == 1, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1$LHS1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1$LHS2)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1$Cat1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1$Cat2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1$LHS1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1$LHS2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1$Cat1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1, 
-                                                             coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1,
-                                                            rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.1_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
-#cluster 5-2
+#cluster 7-2
 #subset to just cluster 2
 
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta5 == 2, ]
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta7 == 2, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2$LHS1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2$LHS2)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2$Cat1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2$Cat2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2$LHS1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2$LHS2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2$Cat1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2, 
-                                                               coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2,
-                                                              rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
-#cluster 5-3
+#cluster 7-3
 #subset to just cluster 3
 
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta5 == 3, ]
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta7 == 3, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3$LHS1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3$LHS2)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3$Cat1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3$Cat2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3$LHS1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3$LHS2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3$Cat1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3, 
-                                                               coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3,
-                                                              rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.3_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
-#cluster 5-4
+#cluster 7-4
 #subset to just cluster 4
 
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta5 == 4, ]
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta7 == 4, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4$LHS1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4$LHS2)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4$Cat1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4$Cat2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4$LHS1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4$LHS2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4$Cat1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4, 
-                                                               coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4,
-                                                              rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.4_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
-#cluster 5-5
+#cluster 7-5
 #subset to just cluster 5
 
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta5 == 5, ]
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta7 == 5, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5$LHS1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5$LHS2)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5$Cat1)
-pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5$Cat2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5$LHS1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5$LHS2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5$Cat1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5, 
-                                                               coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5))
-xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5,
-                                                              rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5))
-qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.5_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
+#cluster 7-6
+#subset to just cluster 6
+
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta7 == 6, ]
+
+#drop extra levels not in this cluster
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6$LHS1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6$LHS2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6$Cat1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6$Cat2)
+
+#make cross tabs
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6))
+
+#get frequency for each question
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.6_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+
+#cluster 7-7
+#subset to just cluster 7
+
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7 = DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset[DataFrame_pruned.rules_lhs2_conf50_noHR_nosubset$Cluster_gupta7 == 7, ]
+
+#drop extra levels not in this cluster
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7$LHS1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7$LHS1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7$LHS2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7$LHS2)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7$Cat1 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7$Cat1)
+pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7$Cat2 = factor(pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7$Cat2)
+
+#make cross tabs
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7 = rbind( xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7))
+xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7 = cbind(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7))
+
+#get frequency for each question
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7))
+qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7 = merge(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.2_LHS1, qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust7.7_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
 
 

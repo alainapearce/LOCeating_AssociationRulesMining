@@ -72,7 +72,7 @@ source('LOC_Analyses_CascadeApproach.R')
   Ethnicity\scriptsize{(\textit{N})}&   &&  &    \\
   \hspace{10pt} Hispanic/Latino     & 8   && 2   & 5   \\
   \hspace{10pt} Not Hispanic/Latino & 126 && 33  & 76   \\
-  \hspace{10pt} Not Reported        & 39  && 2   & 34 \\
+  \hspace{10pt} Not Reported        & 42  && 2   & 34 \\
   Race$^{A}$\scriptsize{(\textit{N})}&   &&  &    \\
   \hspace{10pt} Black/African American & 6   && 4  & 2  \\
   \hspace{10pt} White                  & 161 && 31 & 114  \\
@@ -110,12 +110,12 @@ source('LOC_Analyses_CascadeApproach.R')
   Total\scriptsize{(\textit{N})}    & 177  && 37  & 121   \\
   \hspace{10pt} LOC Not Reported        & 19  &&  &    \\
   Breast Fed Duration\scriptsize{(\textit{N})}         &   &&  &   \\
-  \hspace{10pt} Never      & 46 && 10 & 26   \\
-  \hspace{10pt} 1-3 months & 14 && 3 & 11   \\
-  \hspace{10pt} 4-6 months & 47 && 13 & 32  \\
-  \hspace{10pt} 7-9 months & 34 && 5 & 29   \\
-  \hspace{10pt} 10+ months & 16 && 5 & 11  \\
-  \hspace{10pt} Not Reported & 5 && 1  &  3 \\
+  \hspace{10pt} Never      & 53 && 10 & 30   \\
+  \hspace{10pt} 1-3 months & 15 && 3 & 12   \\
+  \hspace{10pt} 4-6 months & 51 && 13 & 35  \\
+  \hspace{10pt} 7-9 months & 36 && 5 & 31   \\
+  \hspace{10pt} 10+ months & 18 && 5 & 11  \\
+  \hspace{10pt} Not Reported & 4 && 1  & 2 \\
   Maternal Ed$^{A}$\scriptsize{(\textit{N})}&   &&  &     \\
   \hspace{10pt} High School          & 26 && 10 & 11   \\
   \hspace{10pt} Post High School     & 145 && 26 & 105  \\
@@ -177,6 +177,8 @@ source('LOC_Analyses_CascadeApproach.R')
 \end{tabular}
 \end{table}
 
+\FloatBarrier
+
 #Fequency of Items by LOC status
 
 ```{r LOCyes_itemFreqPlot, echo=FALSE, include=FALSE}
@@ -208,8 +210,9 @@ Confidence = 0.33<p>
 Support = 0.06 (25%, n=9)<p>
 
 29 rules were identified: <p>
-$\bullet$ 3 after controlling for multiple comparisons<p>
-$\bullet$ 25 were significant uncorrected<p>
+$\bullet$ all 11 had $\kappa$ $\ge$ 0.20 <p>
+$\bullet$ all 29 had added value $\ge$ 0.05 <p>
+$\bullet$ of the 11 remaining, all 11 weres significant after controlling for multiple comparisons<p>
 
 ```{r LOCyes_step1, echo=FALSE, results='asis'}
 kable(DataFrame_pruned.rules_lhs1_conf33[c(1,3:7,12:14)], "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC-Single Predictors") %>%
@@ -230,6 +233,8 @@ Confidence = 0.50<p>
 Support = 0.08 (33%, n = 12)<p>
 
 48 rules were identified:<p>
+$\bullet$ all 48 had $\kappa$ $\ge$ 0.20 <p>
+$\bullet$ all 48 had added value $\ge$ 0.05 <p>
 $\bullet$ all 48 significant after controlling for multiple comparisons<p>
   
 ```{r LOCyes_step2_all, echo=FALSE, results='asis'}
@@ -338,9 +343,10 @@ kable(qfreq_pruned.rules_lhs2_conf50_nosubset_clust4.4, "latex", booktabs = TRUE
 
 ##Testing Additive Effects
 
-Subset: Contains predictors from step 1 (i.e., CFQ 26 and 28 = ‘Disagree’ and CEBQ 34 > ‘Rarely’) <p>
+Subset: Contains predictors from step 1 (i.e., CFQ 26 and 28 = ‘Disagree’ and CEBQ 34 > ‘Rarely’ - 11 rules) <p>
 
-22 rules were identified <p>
+$\bullet$ 39 rules were identified <p>
+$\bullet$ 9 rules had ORs that exceed the single predictor OR <p>
 ```{r LOCyes_step2_subsettab, echo=FALSE, results='asis'}
 kable(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend[c(1,3:7,10:14)], "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC-Significant Additive") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header")) %>%
@@ -348,9 +354,23 @@ kable(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend[c(1,3:7,10:14)], "la
 ```
 \FloatBarrier
 
-CEBQ 34 > Rarely (FR) + CFQ 26 = Dissagree (PE)
-```{r LOCyes_CEBQ34.CFQ26, echo=FALSE, results='asis'}
-kable(CEBQ34.CFQ26_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CEBQ 34 > Rarely (FR) + CFQ 26 = Dissagree (PE)") %>%
+CEBQ 12 > Rarely (FR) + CFQ 26 = Dissagree (PE)
+```{r LOCyes_CEBQ12.CFQ26, echo=FALSE, results='asis'}
+kable(CEBQ12.CFQ26_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CEBQ 12 > Rarely (FR) + CFQ 26 = Dissagree (PE))") %>%
+  kable_styling(latex_options = c("hold_position", "repeat_header")) 
+```
+\FloatBarrier
+
+CEBQ 33 > Sometimes (FF) + Breastfeeding < 7 mo
+```{r LOCyes_CEBQ33.BFls7mo, echo=FALSE, results='asis'}
+kable(CEBQ33.BFls7mo_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CEBQ 33 > Sometimes (FF) + Breastfeeding < 7 mo") %>%
+  kable_styling(latex_options = c("hold_position", "repeat_header")) 
+```
+\FloatBarrier
+
+CEBQ 33 > Sometimes (FF) + CEBQ 1 > Sometimes (EF)
+```{r LOCyes_CEBQ33.CEBQ1, echo=FALSE, results='asis'}
+kable(CEBQ33.CEBQ1_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CEBQ 33 > Sometimes (FF) + CEBQ 1 > Sometimes (EF)") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header")) 
 ```
 \FloatBarrier
@@ -362,12 +382,40 @@ kable(CFQ28.CEBQ33_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, 
 ```
 \FloatBarrier
 
+CEBQ 34 > Rarely (FR) + CFQ 28 = Dissagree (PE)
+```{r LOCyes_CEBQ34.CFQ28, echo=FALSE, results='asis'}
+kable(CEBQ34.CFQ28_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CEBQ 34 > Rarely (FR) + CFQ 28 = Dissagree (PE)") %>%
+  kable_styling(latex_options = c("hold_position", "repeat_header")) 
+```
+\FloatBarrier
+
+CEBQ 7 > Sometimes (FF) + CEBQ 1 > Sometimes (EF)
+```{r LOCyes_CEBQ7.CEBQ1, echo=FALSE, results='asis'}
+kable(CEBQ7.CEBQ1_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CEBQ 7 > Sometimes (FF) + CEBQ 1 > Sometimes (EF)") %>%
+  kable_styling(latex_options = c("hold_position", "repeat_header")) 
+```
+\FloatBarrier
+
+CFQ 21 = Agree (Restrict) + CFQ 21 < Neutral (Restrict)
+```{r LOCyes_CFQ20.CFQ21, echo=FALSE, results='asis'}
+kable(CFQ20.CFQ21_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CFQ 21 = Agree (Restrict) + CFQ 21 < Neutral (Restrict)") %>%
+  kable_styling(latex_options = c("hold_position", "repeat_header")) 
+```
+\FloatBarrier
+
 CEBQ 34 > Rarely (FR) + CFQ 27 < Neutral (PE)
 ```{r LOCyes_CEBQ34.CFQ27, echo=FALSE, results='asis'}
 kable(CEBQ34.CFQ27_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CEBQ 34 > Rarely (FR) + CFQ 27 < Neutral (PE)") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
+\FloatBarrier
+
+CEBQ 7 > Sometimes (FF) + CFQ 28 < Neutral (PE)
+```{r LOCyes_CEBQ7.CFQ28, echo=FALSE, results='asis'}
+kable(CEBQ7.CFQ28_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of LOC: CEBQ 7 > Sometimes (FF) + CFQ 28 < Neutral (PE)") %>%
+  kable_styling(latex_options = c("hold_position", "repeat_header")) 
+```
 \FloatBarrier
 
 #Determinants of No LOC-eating
@@ -377,17 +425,16 @@ kable(CEBQ34.CFQ27_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, 
 Confidence = 0.33<p>
 Support = 0.19 (25%, n = 30)<p>
 
-Identified 107 rules, 1 of which was significant uncorrected and 1 after correction (13 were significant uncorrected)<p>
+Identified 107 rules were identified <p>
+$\bullet$ 1  had $\kappa$ $\ge$ 0.20 <p>
+$\bullet$ 34 had added value $\ge$ 0.05 <p>
+$\bullet$ the 1 remaining rule was significant <p>
+
 ```{r LOCno_step1, echo=FALSE, results='asis'}
 kable(DataFrame_pruned.rules_lhs1_conf33_no_sig[c(1,3:7,10:14)], "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of No LOC-Single Predictors") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
-Category frequencies for uncorrected rules
-```{r LOCno_step1_cattab, echo=FALSE, results='asis'}
-kable(xtab_pruned.rules_lhs1_conf33_no_sig, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of No LOC-Cross Tab Single Predictors") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
 
 \FloatBarrier
 
@@ -395,9 +442,13 @@ kable(xtab_pruned.rules_lhs1_conf33_no_sig, "latex", booktabs = TRUE, longtable 
 Confidence = 0.50<p>
 Support = 0.255 (33%, n = 40)<p>
 
-Found 1335 rules, No significant rules after correction. There were 330 uncorrected were significant<p>
+Found 1335 rules were identified <p>
+$\bullet$ 16  had $\kappa$ $\ge$ 0.20 <p>
+$\bullet$ 678 had added value $\ge$ 0.05 <p>
+$\bullet$ of the remaining 16 rules that met both criteria, all were significant after correction <p>
+
 ```{r LOCno_step2, echo=FALSE, results='asis'}
-kable(DataFrame_pruned.rules_lhs2_conf50_no_nosubset[1:411, c(1:2,4:8,11:17)], "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of No LOC-Multiple Predictors") %>%
+kable(DataFrame_pruned.rules_lhs2_conf50_no_nosubset[c(1:2,4:8,11:17)], "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of No LOC-Multiple Predictors") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
@@ -423,9 +474,9 @@ kable(pruned.rules_lhs2_conf50_no_nclust_Vsum, "latex", booktabs = TRUE, longtab
 
 \FloatBarrier
 Number of clusters:<p>
-$\bullet$ 3: Connectivity<p>
-$\bullet$ 4: lower sums of square, Average Proportion of Non-Overlap, and Average distance between centers<p>
-$\bullet$ 10: Dunn, Average Distance, and FOM<p>
+$\bullet$ 2: Connectivity<p>
+$\bullet$ 3: lower sums of square, Silhouette width, Dunn Indexp>
+$\bullet$ 4: APN, ADM (5 is AD and FOM) <p>
 
 ```{r LOCno_step2_clust4, echo=FALSE, results='asis'}
 kable(xtabsClust_pruned.rules_lhs2_conf50_no_nosubset, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Clusters")
@@ -437,70 +488,58 @@ kable(xtabsClust_pruned.rules_lhs2_conf50_no_nosubset, "latex", booktabs = TRUE,
 ###Endorsement of Rules
 
 ```{r LOCno_step2_nRulesPlot, echo=FALSE, include=TRUE}
-indQ_endorse_LOC_conf50no
+indQ_endorse_LOC_conf50_no
 ```
 
-###4 Cluster Solution
+###3 Cluster Solution
 
 Average Silhouette Widths
-```{r LOCno_step2_clust4_silplot, echo=FALSE, include=TRUE}
-plot(silhouette(pruned.rules_lhs2_conf50_noHR_4clust), col = 2:3)
+```{r LOCno_step2_clust3_silplot, echo=FALSE, include=TRUE}
+plot(silhouette(pruned.rules_lhs2_conf50_no_3clust), col = 2:3)
 ```
 \FloatBarrier
 
 Cluster Plot
-```{r LOCno_step2_clust4_clusplot, echo=FALSE, include=TRUE}
-clusplot(pruned.rules_lhs2_conf50_noHR_4clust, main = "Cluster plot, k = 4", 
-         color = TRUE)
+```{r LOCno_step2_clust3_clusplot, echo=FALSE, include=TRUE}
+#clusplot(pruned.rules_lhs2_conf50_no_3clust, main = "Cluster plot, k = 3", 
+#         color = TRUE)
 ```
 \FloatBarrier
 
 Cluster 1
-```{r LOCno_clust4.1_xtab, echo=FALSE,  results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 1") %>%
+```{r LOCno_clust3.1_xtab, echo=FALSE,  results='asis'}
+kable(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 1") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 \FloatBarrier
 
-```{r LOCno_clust4.1_qfreq, echo=FALSE,  results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.1_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 1 Question Frequency") %>%
+```{r LOCno_clust3.1_qfreq, echo=FALSE,  results='asis'}
+kable(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 1 Question Frequency") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 \FloatBarrier
 
 Cluster 2
-```{r LOCno_clust4.2_xtab, echo=FALSE,  results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.2, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 2") %>%
+```{r LOCno_clust3.2_xtab, echo=FALSE,  results='asis'}
+kable(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 2") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 \FloatBarrier
 
-```{r LOCno_clust4.2_qfreq, echo=FALSE,  results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.2_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 2 Question Frequency") %>%
+```{r LOCno_clust3.2_qfreq, echo=FALSE,  results='asis'}
+kable(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 2 Question Frequency") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
 Cluster 3
-```{r LOCno_clust4.3_xtab, echo=FALSE,  results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.3, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 3") %>%
+```{r LOCno_clust3.3_xtab, echo=FALSE,  results='asis'}
+kable(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 3") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 \FloatBarrier
 
-```{r LOCno_clust4.3_qfreq, echo=FALSE,  results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.3_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 2 Question Frequency") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
-
-Cluster 4
-```{r LOCno_clust4.4_xtab, echo=FALSE,  results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust4.4, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 3") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
-\FloatBarrier
-
-```{r LOCno_clust4.4_qfreq, echo=FALSE,  results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.4_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 2 Question Frequency") %>%
+```{r LOCno_clust3.3_qfreq, echo=FALSE,  results='asis'}
+kable(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC-Cluster 2 Question Frequency") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
 
@@ -508,36 +547,33 @@ kable(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust4.4_LHS1, "latex", booktab
 
 \FloatBarrier
 Subset: Contains predictor from step 1<p>
-$\bullet$ 61 rules contained a significant predictor from step 1 <p>
+$\bullet$ 14 rules contained a significant predictor from step 1 <p>
 $\bullet$ all were signficant <p>
-$\bullet$ 7 were significant after controlling for multiple comparisons - adjuting only for those 61<p>
+$\bullet$ none showed greater OR than single predictor<p>
 
 ```{r LOCno_step2_subset, echo=FALSE, results='asis'}
 kable(DataFrame_pruned.rules_lhs1_lhs2_conf50_no_lhs1_holm_sig, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of No LOC-Additive Effect OR Comparisons") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
 ```
-\FLoatBarrier
-
-$\bullet$ 1 rule had OR that exceed the step 1 OR<p>
-
-CEBQ 34 > Rarely (FR) + CEBQ 7 = Sometimes (FF)
-```{r LOCno_CEBQ34.CEBQ7, echo=FALSE, results='asis'}
-kable(CEBQ34.CEBQ7_tab, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC additive: CEBQ 34 > Rarely (FR) + CEBQ 7 = Sometimes (FF)") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
+\FloatBarrier
 
 \clearpage
 
 #Determinants of Absence of LOC in High Risk Sample
 
-$\bullet$ There were 91 with at least 1 High Risk characteristic: 61 no LOC (50% of all no LOC sample) and 30 LOC. <p>
+$\bullet$ There were 70 with at least 1 High Risk characteristic: cebq34_gRarely, mEducation_HS, cfq23_lsNeutralAD
+$\bullet$ no LOC n = 42 (35% of no LOC); LOC n = 28 (76% of LOC)
 
 ##Step 1: Single Predictor
 
 $\bullet$ Confidence = 0.33 <p>
-$\bullet$ Support = 0.17 (25%, n = 15) <p>
+$\bullet$ Support = 0.14 (25%, n = 10) <p>
 
-132 rules were identified, none of which were significant with multiple comparisons; 10 were significant uncorrected.  <p>
+137 rules were identified <p>
+$\bullet$ 7  had $\phi$ $\ge$ 0.20 <p>
+$\bullet$ 74 had added value $\ge$ 0.05 <p>
+$\bullet$ of the remaining 7 rules that met both criteria, none were significant after correction <p>
+$\bullet$ of the remaining 7 rules that met both criteria, 6 were significant with no correction <p>  
 ```{r HR_LOCno_step1, echo=FALSE, results='asis'}
 kable(DataFrame_pruned.rules_lhs1_conf33_no_sig, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of Absence of LOC in High Risk Sample") %>%
   kable_styling(latex_options = c("hold_position", "repeat_header"))
@@ -549,91 +585,95 @@ kable(DataFrame_pruned.rules_lhs1_conf33_no_sig, "latex", booktabs = TRUE, longt
 $\bullet$  Confidence = 0.50 <p>
 $\bullet$ Support = 0.23 (33%, n = 20) <p>
 
-2858 ruels were identified, none of which were significant rules after correction. 552 were significant with no correction. <p>
+2589 rules were identified <p>
+$\bullet$ 296  had $\phi$ $\ge$ 0.10 <p>
+$\bullet$ 1855 had added value $\ge$ 0.05 <p>
+$\bullet$ of the remaining 296 rules that met both criteria, 1 was significant after correction <p>
+$\bullet$ of the remaining 296 rules that met both criteria, 255 were significant with no correction <p>  
 \FloatBarrier
 
 ##Clustering
 
 Number of clusters:<p>
-$\bullet$ 5: Connectivity, Average Proportion of Non-Overlap, and Average distance between centers<p>
-$\bullet$ 10: Dunn, Average Distance, Dunn metric, silhouette width (not the heighest though)<p>
+$\bullet$ 7: Connectivity, Average Proportion of Non-Overlap, and Average distance between centers<p>
+$\bullet$ 10: Dunn, Average Distance, Average Proportion of Non-Overlap, and Average distance between center<p>
 
-\subsection{3 Cluster Solution}
-Average Silhouette Widths
-```{r HR_LOCno_step2_clust5_silplot, echo=FALSE, include=TRUE}
-plot(silhouette(pruned.rules_lhs2_conf50_noHR_5clust), col = 2:3)
-```
-\FloatBarrier
+<!-- \subsection{3 Cluster Solution} -->
+<!-- Average Silhouette Widths -->
+<!-- ```{r HR_LOCno_step2_clust5_silplot, echo=FALSE, include=TRUE} -->
+<!-- plot(silhouette(pruned.rules_lhs2_conf50_noHR_7clust)) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
 
-Cluster Plot
-```{r HR_LOCno_step2_clust5_clusplot, echo=FALSE, include=TRUE}
-clusplot(pruned.rules_lhs2_conf50_noHR_5clust, main = "Cluster plot, k = 2", 
-         color = TRUE)
-```
-\FloatBarrier
+<!-- Cluster Plot -->
+<!-- ```{r HR_LOCno_step2_clust5_clusplot, echo=FALSE, include=TRUE} -->
+<!-- clusplot(pruned.rules_lhs2_conf50_noHR_7clust, main = "Cluster plot, k = 7",  -->
+<!--          color = TRUE) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
 
-Cluster 1
-```{r HR_LOCno_clust5.1_xtab, echo=FALSE, results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 1") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
-\FloatBarrier
+<!-- Cluster 1 -->
+<!-- ```{r HR_LOCno_clust5.1_xtab, echo=FALSE, results='asis'} -->
+<!-- kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 1") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
 
-```{r HR_LOCno_clust5.1_qfreq, echo=FALSE, results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 1 Question Frequency") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
-\FloatBarrier
+<!-- ```{r HR_LOCno_clust5.1_qfreq, echo=FALSE, results='asis'} -->
+<!-- kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.1_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 1 Question Frequency") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
 
-Cluster 2
-```{r HR_LOCno_clust5.2_xtab, echo=FALSE, results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 2") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
-\FloatBarrier
+<!-- Cluster 2 -->
+<!-- ```{r HR_LOCno_clust5.2_xtab, echo=FALSE, results='asis'} -->
+<!-- kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 2") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
 
-```{r HR_LOCno_clust5.2_qfreq, echo=FALSE, results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 2 Question Frequency") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
+<!-- ```{r HR_LOCno_clust5.2_qfreq, echo=FALSE, results='asis'} -->
+<!-- kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.2_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 2 Question Frequency") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
 
-Cluster 3
-```{r HR_LOCno_clust5.3_xtab, echo=FALSE, results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 3") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
-\FloatBarrier
+<!-- Cluster 3 -->
+<!-- ```{r HR_LOCno_clust5.3_xtab, echo=FALSE, results='asis'} -->
+<!-- kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 3") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
 
-```{r HR_LOCno_clust5.3_qfreq, echo=FALSE, results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 3 Question Frequency") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
+<!-- ```{r HR_LOCno_clust5.3_qfreq, echo=FALSE, results='asis'} -->
+<!-- kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.3_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 3 Question Frequency") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
 
-Cluster 4
-```{r HR_LOCno_clust5.4_xtab, echo=FALSE, results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 4") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
-\FloatBarrier
+<!-- Cluster 4 -->
+<!-- ```{r HR_LOCno_clust5.4_xtab, echo=FALSE, results='asis'} -->
+<!-- kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 4") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
 
-```{r HR_LOCno_clust5.4_qfreq, echo=FALSE, results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 4 Question Frequency") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
+<!-- ```{r HR_LOCno_clust5.4_qfreq, echo=FALSE, results='asis'} -->
+<!-- kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.4_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 4 Question Frequency") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
 
-Cluster 5
-```{r HR_LOCno_clust5.5_xtab, echo=FALSE, results='asis'}
-kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 5") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
-\FloatBarrier
+<!-- Cluster 5 -->
+<!-- ```{r HR_LOCno_clust5.5_xtab, echo=FALSE, results='asis'} -->
+<!-- kable(xtabs_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 5") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
+<!-- \FloatBarrier -->
 
-```{r HR_LOCno_clust5.5_qfreq, echo=FALSE, results='asis'}
-kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 5 Question Frequency") %>%
-  kable_styling(latex_options = c("hold_position", "repeat_header"))
-```
+<!-- ```{r HR_LOCno_clust5.5_qfreq, echo=FALSE, results='asis'} -->
+<!-- kable(qfreq_pruned.rules_lhs2_conf50_noHR_nosubset_clust5.5_LHS1, "latex", booktabs = TRUE, longtable = TRUE, digits = 3, caption = "Determinants of NO LOC in High Risk Sample-Cluster 5 Question Frequency") %>% -->
+<!--   kable_styling(latex_options = c("hold_position", "repeat_header")) -->
+<!-- ``` -->
 
-\subsection{Testing Additive Effects}
-Additive effects were not tested because there were no significant (after correction) rules in Step 1
+<!-- \subsection{Testing Additive Effects} -->
+<!-- Additive effects were not tested because there were no significant (after correction) rules in Step 1 -->
 
 
