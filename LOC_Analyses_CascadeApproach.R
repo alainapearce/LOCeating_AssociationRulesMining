@@ -552,6 +552,9 @@ nrow(cfq_LOC_ndup[is.na(cfq_LOC_ndup$cfqMON) && cfq_LOC_ndup$loc1 == 'No', ])
 ###############################################
 ####            ASSOCIATION RULES          ####
 ###############################################
+#mother completed
+ParentComplete_noNA = xtabs(~relationship, data = LOC_ndup[!is.na(LOC_ndup$loc1), ])
+ParentComplete = xtabs(~relationship, data = LOC_ndup)
 
 #### convert to transactions ####
 #all questions expanded below
@@ -650,10 +653,10 @@ pruned.rules_lhs1_conf33 = subset(pruned.rules_lhs1_conf33, subset = size(lhs(pr
 
 #check added value and correlation
 pruned.rules_lhs1_conf33_qdat = data.frame(quality(pruned.rules_lhs1_conf33))
-nrow(pruned.rules_lhs1_conf33_qdat[pruned.rules_lhs1_conf33_qdat$kappa>=0.20, ])
+nrow(pruned.rules_lhs1_conf33_qdat[pruned.rules_lhs1_conf33_qdat$kappa>=0.21, ])
 nrow(pruned.rules_lhs1_conf33_qdat[pruned.rules_lhs1_conf33_qdat$addVal>=0.05, ])
 
-pruned.rules_lhs1_conf33 = subset(pruned.rules_lhs1_conf33, subset = quality(pruned.rules_lhs1_conf33)[8]>=0.20)
+pruned.rules_lhs1_conf33 = subset(pruned.rules_lhs1_conf33, subset = quality(pruned.rules_lhs1_conf33)[8]>=0.21)
 pruned.rules_lhs1_conf33 = subset(pruned.rules_lhs1_conf33, subset = quality(pruned.rules_lhs1_conf33)[7]>=0.05)
 
 #add addjustment for multiple comparisons to data
@@ -666,7 +669,7 @@ pruned.rules_lhs1_conf33 = sort(pruned.rules_lhs1_conf33, by=c("fisher.p","fishe
 #HERE
 #make list of significant predictors
 lhs1_conf33_vars = c("cfq26=Disagree", "cfq28=Disagree", "cebq34_gRarely", "cfq23_lsNeutralAD", "cebq12_gRarely",
-  "cebq7_gSometimes", "cfq20=Agree", "cebq33_gSometimes", "mEducation_HS", "cfq29=Always", "cfq31=Always")
+  "cebq7_gSometimes", "cfq20=Agree", "cebq33_gSometimes", "mEducation_HS", "cfq29=Always")
 
 #get odds ratio confidence intervals for significant uncorrected fisher pvalue rules
 #(all rules in this case)
@@ -722,7 +725,7 @@ pruned.rules_lhs2_conf50 = subset(pruned.rules_lhs2_conf50, subset = size(lhs(pr
 
 #prune rules for correlation and added value
 pruned.rules_lhs2_conf50_qdat = data.frame(quality(pruned.rules_lhs2_conf50))
-nrow(pruned.rules_lhs2_conf50_qdat[pruned.rules_lhs2_conf50_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs2_conf50_qdat[pruned.rules_lhs2_conf50_qdat$kappa >=0.21, ])
 nrow(pruned.rules_lhs2_conf50_qdat[pruned.rules_lhs2_conf50_qdat$addVal >=0.05, ])
 
 pruned.rules_lhs2_conf50 = subset(pruned.rules_lhs2_conf50, subset = quality(pruned.rules_lhs2_conf50)[8]>=0.20)
@@ -933,14 +936,14 @@ DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = DATAFRAME(pruned.rules_l
 #need the following two split the LHS into 2 columns
 DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = with(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend, 
   cbind(colsplit(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS, "\\+", c('LHS1', 'LHS2')), 
-    DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend[2:14]))
+    DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend[2:15]))
 
 
 #merge with transaction labels dataframe to get category labels for each rule in LHS1
 DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = merge(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend, transDataLabels, by.x = "LHS1", by.y = "LHS_label")
 
 #rename variable so can add two category variabls
-names(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend)[16] = "Cat1"
+names(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend)[17] = "Cat1"
 
 #remove/drop unused levels of Cat1
 DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$Cat1 = factor(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$Cat1)
@@ -949,7 +952,7 @@ DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$Cat1 = factor(DataFrame_pr
 DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend = merge(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend, transDataLabels, by.x = "LHS2", by.y = "LHS_label")
 
 #rename variable so can add two category variabls
-names(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend)[17] = "Cat2"
+names(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend)[18] = "Cat2"
 
 #remove/drop unused levels of Cat2
 DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$Cat2 = factor(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$Cat2)
@@ -979,58 +982,22 @@ DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$OR_ExceedCI =
                   ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "mEducation_HS" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "mEducation_HS", 
                     ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[9], "Y", "N"),
                     ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq29=Always" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq29=Always", 
-                      ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[10], "Y", "N"),
-                      ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS1 == "cfq31=Always" | DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$LHS2 == "cfq31=Always", 
-                        ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[11], "Y", "N"), NA)))))))))))
+                      ifelse(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend$oddsRatio > OR_CI_pruned.rules_lhs1_conf33$OR_upperCI[10], "Y", "N"), NA))))))))))
 
 
 write.csv(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend, file = "ResultsOutput/indQ_LOC-YES_lhs2_conf50_additive.csv", row.names = FALSE)
       
 ### Logits to look for interaction for rules with 2 items and OR outside of 1 item OR 95% bound ####
-## CEBQ12_gRarely+CFQ26_Disagree - no Interaction ####
-LOC_arules$cfq26_Disagree = ifelse(LOC_arules$cfq26 == "Disagree", TRUE, FALSE)
 
-CEBQ12.CFQ26_logit = glm(loc1~cebq12_gRarely*cfq26_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CEBQ12.CFQ26_sum = summary(CEBQ12.CFQ26_logit)
-CEBQ12.CFQ26_coef = coef(CEBQ12.CFQ26_sum)[2:4, ]
-CEBQ12.CFQ26_OR = exp(coef(CEBQ12.CFQ26_sum)[2:4,1:2])
-CEBQ12.CFQ26_tab = data.frame(CEBQ12.CFQ26_coef, CEBQ12.CFQ26_OR)
-colnames(CEBQ12.CFQ26_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+## CEBQ7_gSometimesy ####
+CEBQ7_logit = glm(loc1~cebq7_gSometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ7_sum = summary(CEBQ7_logit)
+CEBQ7_coef = coef(CEBQ7_sum)
+CEBQ7_OR = exp(coef(CEBQ7_sum))
+CEBQ7_tab = data.frame(CEBQ7_coef, CEBQ7_OR)
+colnames(CEBQ7_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
 
-## CEBQ7_gRarely+BF_ls7mo ####
-CEBQ33.BFls7mo_logit = glm(loc1~cebq33_gSometimes*BreastFed_ls7mo, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CEBQ33.BFls7mo_sum = summary(CEBQ33.BFls7mo_logit)
-CEBQ33.BFls7mo_coef = coef(CEBQ33.BFls7mo_sum)[2:4, ]
-CEBQ33.BFls7mo_OR = exp(coef(CEBQ33.BFls7mo_sum)[2:4,1:2])
-CEBQ33.BFls7mo_tab = data.frame(CEBQ33.BFls7mo_coef, CEBQ33.BFls7mo_OR)
-colnames(CEBQ33.BFls7mo_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
-
-## CEBQ33_gSometimes+CEB1_gSometimes ####
-CEBQ33.CEBQ1_logit = glm(loc1~cebq33_gSometimes*cebq1_gSometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CEBQ33.CEBQ1_sum = summary(CEBQ33.CEBQ1_logit)
-CEBQ33.CEBQ1_coef = coef(CEBQ33.CEBQ1_sum)[2:4, ]
-CEBQ33.CEBQ1_OR = exp(coef(CEBQ33.CEBQ1_sum)[2:4,1:2])
-CEBQ33.CEBQ1_tab = data.frame(CEBQ33.CEBQ1_coef, CEBQ33.CEBQ1_OR)
-colnames(CEBQ33.CEBQ1_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
-
-## CFQ28_Disagree+CEBQ33_gSometimes ####
-LOC_arules$cfq28_Disagree = ifelse(LOC_arules$cfq28 == "Disagree", TRUE, FALSE)
-CFQ28.CEBQ33_logit = glm(loc1~cebq33_gSometimes*cfq28_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CFQ28.CEBQ33_sum = summary(CFQ28.CEBQ33_logit)
-CFQ28.CEBQ33_coef = coef(CFQ28.CEBQ33_sum)[2:4, ]
-CFQ28.CEBQ33_OR = exp(coef(CFQ28.CEBQ33_sum)[2:4,1:2])
-CFQ28.CEBQ33_tab = data.frame(CFQ28.CEBQ33_coef, CFQ28.CEBQ33_OR)
-colnames(CFQ28.CEBQ33_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
-
-## CEBQ34_gRarely+CFQ28_Disagree ####
-CEBQ34.CFQ28_logit = glm(loc1~cebq34_gRarely*cfq28_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CEBQ34.CFQ28_sum = summary(CEBQ34.CFQ28_logit)
-CEBQ34.CFQ28_coef = coef(CEBQ34.CFQ28_sum)[2:4, ]
-CEBQ34.CFQ28_OR = exp(coef(CEBQ34.CFQ28_sum)[2:4,1:2])
-CEBQ34.CFQ28_tab = data.frame(CEBQ34.CFQ28_coef, CEBQ34.CFQ28_OR)
-colnames(CEBQ34.CFQ28_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
-
-## CEBQ7_gSometimesy+CEB1_gSometimes ####
+## CEBQ7_gSometimesy+CEB1_gSometimes
 LOC_arules$cfq26_Disagree = ifelse(LOC_arules$cebq1_gRarely == "Disagree", TRUE, FALSE)
 
 CEBQ7.CEBQ1_logit = glm(loc1~cebq7_gSometimes*cebq1_gSometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
@@ -1040,27 +1007,7 @@ CEBQ7.CEBQ1_OR = exp(coef(CEBQ7.CEBQ1_sum)[2:4,1:2])
 CEBQ7.CEBQ1_tab = data.frame(CEBQ7.CEBQ1_coef, CEBQ7.CEBQ1_OR)
 colnames(CEBQ7.CEBQ1_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
 
-## cfq20_Agree+cfq21_lsNeutralAD ####
-LOC_arules$cfq21_lsNeutralAD = ifelse(LOC_arules$cfq21 == "Disagree" | LOC_arules$cfq21 == "SlightlyDis", TRUE, FALSE)
-LOC_arules$cfq20_Agree = ifelse(LOC_arules$cfq20 == "Agree", TRUE, FALSE)
-
-CFQ20.CFQ21_logit = glm(loc1~LOC_arules$cfq20_Agree*cfq21_lsNeutralAD, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CFQ20.CFQ21_sum = summary(CFQ20.CFQ21_logit)
-CFQ20.CFQ21_coef = coef(CFQ20.CFQ21_sum)[2:4, ]
-CFQ20.CFQ21_OR = exp(coef(CFQ20.CFQ21_sum)[2:4,1:2])
-CFQ20.CFQ21_tab = data.frame(CFQ20.CFQ21_coef, CFQ20.CFQ21_OR)
-colnames(CFQ20.CFQ21_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
-
-## CEBQ34_gRarely+cfq27_lsNeutralAD ####
-LOC_arules$cfq27_lsNeutralAD = ifelse(LOC_arules$cfq27 == "Disagree" | LOC_arules$cfq27 == "SlightlyDis", TRUE, FALSE)
-CEBQ34.CFQ27_logit = glm(loc1~cebq34_gRarely*cfq27_lsNeutralAD, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
-CEBQ34.CFQ27_sum = summary(CEBQ34.CFQ27_logit)
-CEBQ34.CFQ27_coef = coef(CEBQ34.CFQ27_sum)[2:4, ]
-CEBQ34.CFQ27_OR = exp(coef(CEBQ34.CFQ27_sum)[2:4,1:2])
-CEBQ34.CFQ27_tab = data.frame(CEBQ34.CFQ27_coef, CEBQ34.CFQ27_OR)
-colnames(CEBQ34.CFQ27_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
-
-## CEBQ7_gSometimes+CFQ28_Disagree - no interaction ####
+## CEBQ7_gSometimes+CFQ28_Disagree - no interaction 
 LOC_arules$cfq28_lsNeutralAD = ifelse(LOC_arules$cfq28 == "Disagree" | LOC_arules$cfq28 == "SlightlyDis", TRUE, FALSE)
 
 CEBQ7.CFQ28_logit = glm(loc1~cebq7_gSometimes*cfq28_lsNeutralAD, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
@@ -1069,6 +1016,105 @@ CEBQ7.CFQ28_coef = coef(CEBQ7.CFQ28_sum)[2:4, ]
 CEBQ7.CFQ28_OR = exp(coef(CEBQ7.CFQ28_sum)[2:4,1:2])
 CEBQ7.CFQ28_tab = data.frame(CEBQ7.CFQ28_coef, CEBQ7.CFQ28_OR)
 colnames(CEBQ7.CFQ28_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ33_gSometimes ####
+CEBQ33_logit = glm(loc1~cebq33_gSometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ33_sum = summary(CEBQ33_logit)
+CEBQ33_coef = coef(CEBQ33_sum)
+CEBQ33_OR = exp(coef(CEBQ33_sum))
+CEBQ33_tab = data.frame(CEBQ33_coef, CEBQ33_OR)
+colnames(CEBQ33_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ33_gSometimes+BF_ls7mo
+CEBQ33.BFls7mo_logit = glm(loc1~cebq33_gSometimes*BreastFed_ls7mo, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ33.BFls7mo_sum = summary(CEBQ33.BFls7mo_logit)
+CEBQ33.BFls7mo_coef = coef(CEBQ33.BFls7mo_sum)[2:4, ]
+CEBQ33.BFls7mo_OR = exp(coef(CEBQ33.BFls7mo_sum)[2:4,1:2])
+CEBQ33.BFls7mo_tab = data.frame(CEBQ33.BFls7mo_coef, CEBQ33.BFls7mo_OR)
+colnames(CEBQ33.BFls7mo_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ33_gSometimes+CEB1_gSometimes
+CEBQ33.CEBQ1_logit = glm(loc1~cebq33_gSometimes*cebq1_gSometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ33.CEBQ1_sum = summary(CEBQ33.CEBQ1_logit)
+CEBQ33.CEBQ1_coef = coef(CEBQ33.CEBQ1_sum)[2:4, ]
+CEBQ33.CEBQ1_OR = exp(coef(CEBQ33.CEBQ1_sum)[2:4,1:2])
+CEBQ33.CEBQ1_tab = data.frame(CEBQ33.CEBQ1_coef, CEBQ33.CEBQ1_OR)
+colnames(CEBQ33.CEBQ1_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ33_gSometimes + CFQ28_Disagree
+LOC_arules$cfq28_Disagree = ifelse(LOC_arules$cfq28 == "Disagree", TRUE, FALSE)
+CFQ28.CEBQ33_logit = glm(loc1~cebq33_gSometimes*cfq28_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CFQ28.CEBQ33_sum = summary(CFQ28.CEBQ33_logit)
+CFQ28.CEBQ33_coef = coef(CFQ28.CEBQ33_sum)[2:4, ]
+CFQ28.CEBQ33_OR = exp(coef(CFQ28.CEBQ33_sum)[2:4,1:2])
+CFQ28.CEBQ33_tab = data.frame(CFQ28.CEBQ33_coef, CFQ28.CEBQ33_OR)
+colnames(CFQ28.CEBQ33_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ34_gRarely ####
+CEBQ34_logit = glm(loc1~cebq34_gRarely, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ34_sum = summary(CEBQ34_logit)
+CEBQ34_coef = coef(CEBQ34_sum)
+CEBQ34_OR = exp(coef(CEBQ34_sum))
+CEBQ34_tab = data.frame(CEBQ34_coef, CEBQ34_OR)
+colnames(CEBQ34_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ34_gRarely+cfq27_lsNeutralAD
+LOC_arules$cfq27_lsNeutralAD = ifelse(LOC_arules$cfq27 == "Disagree" | LOC_arules$cfq27 == "SlightlyDis", TRUE, FALSE)
+CEBQ34.CFQ27_logit = glm(loc1~cebq34_gRarely*cfq27_lsNeutralAD, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ34.CFQ27_sum = summary(CEBQ34.CFQ27_logit)
+CEBQ34.CFQ27_coef = coef(CEBQ34.CFQ27_sum)[2:4, ]
+CEBQ34.CFQ27_OR = exp(coef(CEBQ34.CFQ27_sum)[2:4,1:2])
+CEBQ34.CFQ27_tab = data.frame(CEBQ34.CFQ27_coef, CEBQ34.CFQ27_OR)
+colnames(CEBQ34.CFQ27_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ34_gRarely+CFQ28_Disagree
+CEBQ34.CFQ28_logit = glm(loc1~cebq34_gRarely*cfq28_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ34.CFQ28_sum = summary(CEBQ34.CFQ28_logit)
+CEBQ34.CFQ28_coef = coef(CEBQ34.CFQ28_sum)[2:4, ]
+CEBQ34.CFQ28_OR = exp(coef(CEBQ34.CFQ28_sum)[2:4,1:2])
+CEBQ34.CFQ28_tab = data.frame(CEBQ34.CFQ28_coef, CEBQ34.CFQ28_OR)
+colnames(CEBQ34.CFQ28_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## cfq20_Agree ####
+LOC_arules$cfq20_Agree = ifelse(LOC_arules$cfq20 == "Agree", TRUE, FALSE)
+
+CFQ20_logit = glm(loc1~cfq20_Agree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CFQ20_sum = summary(CFQ20_logit)
+CFQ20_coef = coef(CFQ20_sum)
+CFQ20_OR = exp(coef(CFQ20_sum))
+CFQ20_tab = data.frame(CFQ20_coef, CFQ20_OR)
+colnames(CFQ20_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## cfq20_Agree+cfq21_lsNeutralAD 
+LOC_arules$cfq21_lsNeutralAD = ifelse(LOC_arules$cfq21 == "Disagree" | LOC_arules$cfq21 == "SlightlyDis", TRUE, FALSE)
+
+CFQ20.CFQ21_logit = glm(loc1~cfq20_Agree*cfq21_lsNeutralAD, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CFQ20.CFQ21_sum = summary(CFQ20.CFQ21_logit)
+CFQ20.CFQ21_coef = coef(CFQ20.CFQ21_sum)[2:4, ]
+CFQ20.CFQ21_OR = exp(coef(CFQ20.CFQ21_sum)[2:4,1:2])
+CFQ20.CFQ21_tab = data.frame(CFQ20.CFQ21_coef, CFQ20.CFQ21_OR)
+colnames(CFQ20.CFQ21_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CFQ26_Disagre ####
+LOC_arules$cfq26_Disagree = ifelse(LOC_arules$cfq26 == "Disagree", TRUE, FALSE)
+
+CFQ26_logit = glm(loc1~cfq26_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CFQ26_sum = summary(CFQ26_logit)
+CFQ26_coef = coef(CFQ26_sum)
+CFQ26_OR = exp(coef(CFQ26_sum))
+CFQ26_tab = data.frame(CFQ26_coef, CFQ26_OR)
+colnames(CFQ26_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
+## CEBQ12_gRarely+CFQ26_Disagree - no Interaction 
+LOC_arules$cfq26_Disagree = ifelse(LOC_arules$cfq26 == "Disagree", TRUE, FALSE)
+
+CEBQ12.CFQ26_logit = glm(loc1~cebq12_gRarely*cfq26_Disagree, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
+CEBQ12.CFQ26_sum = summary(CEBQ12.CFQ26_logit)
+CEBQ12.CFQ26_coef = coef(CEBQ12.CFQ26_sum)[2:4, ]
+CEBQ12.CFQ26_OR = exp(coef(CEBQ12.CFQ26_sum)[2:4,1:2])
+CEBQ12.CFQ26_tab = data.frame(CEBQ12.CFQ26_coef, CEBQ12.CFQ26_OR)
+colnames(CEBQ12.CFQ26_tab) = c("Beta", "SE", "z", "P", "e^beta", "e^se")
+
 
 ### trace transactions matching rules to participants ####
 st_pruned.rules_lhs2_conf50 = supportingTransactions(pruned.rules_lhs2_conf50_all, LOC_arules_trans)
@@ -1124,10 +1170,10 @@ pruned.rules_lhs1_conf33_no = subset(pruned.rules_lhs1_conf33_no, subset = size(
 
 #check added value and correlation
 pruned.rules_lhs1_conf33_no_qdat = data.frame(quality(pruned.rules_lhs1_conf33_no))
-nrow(pruned.rules_lhs1_conf33_no_qdat[pruned.rules_lhs1_conf33_no_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs1_conf33_no_qdat[pruned.rules_lhs1_conf33_no_qdat$kappa >=0.21, ])
 nrow(pruned.rules_lhs1_conf33_no_qdat[pruned.rules_lhs1_conf33_no_qdat$addVal >=0.05, ])
 
-pruned.rules_lhs1_conf33_no_red = subset(pruned.rules_lhs1_conf33_no, quality(pruned.rules_lhs1_conf33_no)[8]>=0.20)
+pruned.rules_lhs1_conf33_no_red = subset(pruned.rules_lhs1_conf33_no, quality(pruned.rules_lhs1_conf33_no)[8]>=0.21)
 pruned.rules_lhs1_conf33_no_red = subset(pruned.rules_lhs1_conf33_no_red, quality(pruned.rules_lhs1_conf33_no_red)[7]>=0.05)
 
 #add holm correction to fisher p-values
@@ -1190,10 +1236,10 @@ pruned.rules_lhs2_conf50_no_all = subset(pruned.rules_lhs2_conf50_no, subset = s
 
 #check added value and correlation
 pruned.rules_lhs2_conf50_no_all_qdat = data.frame(quality(pruned.rules_lhs2_conf50_no_all))
-nrow(pruned.rules_lhs2_conf50_no_all_qdat[pruned.rules_lhs2_conf50_no_all_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs2_conf50_no_all_qdat[pruned.rules_lhs2_conf50_no_all_qdat$kappa >=0.21, ])
 nrow(pruned.rules_lhs2_conf50_no_all_qdat[pruned.rules_lhs2_conf50_no_all_qdat$addVal >=0.05, ])
 
-pruned.rules_lhs2_conf50_no_red = subset(pruned.rules_lhs2_conf50_no_all, quality(pruned.rules_lhs2_conf50_no_all)[8]>=0.20)
+pruned.rules_lhs2_conf50_no_red = subset(pruned.rules_lhs2_conf50_no_all, quality(pruned.rules_lhs2_conf50_no_all)[8]>=0.21)
 pruned.rules_lhs2_conf50_no_red = subset(pruned.rules_lhs2_conf50_no_red, quality(pruned.rules_lhs2_conf50_no_red)[7]>=0.05)
 
 #add adjusted pvalues to rules information--adjusting for all rules here, not just subset
@@ -1219,7 +1265,7 @@ dist_pruned.rules_lhs2_conf50_no = dissimilarity(pruned.rules_lhs2_conf50_no_red
 
 ## mediods partitioning--determine number of clusters ####
 #within cluster sums of squares--look for elbow in graph
-pruned.rules_lhs2_conf50_no_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_no), cluster::pam, method = "wss", k.max=10)+ geom_vline(xintercept = 3, linetype = 3)+labs(subtitle = "Elbow method")
+pruned.rules_lhs2_conf50_no_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_no), cluster::pam, method = "wss", k.max=10)+ geom_vline(xintercept = 2, linetype = 3)+labs(subtitle = "Elbow method")
 
 #silhouette width
 pruned.rules_lhs2_conf50_no_nclustSil = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_no), cluster::pam, method = "silhouette", k.max=10)+ labs(subtitle = "Silhouette method")
@@ -1228,35 +1274,35 @@ pruned.rules_lhs2_conf50_no_nclustSil = fviz_nbclust(as.matrix(dist_pruned.rules
 pruned.rules_lhs2_conf50_no_nclustPlotGrid = plot_grid(pruned.rules_lhs2_conf50_no_nclustSSW, pruned.rules_lhs2_conf50_no_nclustSil, labels = c("", ""))
 
 #test internal validity metrics
-#pruned.rules_lhs2_conf50_no_nclust_internV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_no), 2:5, clMethods=c("pam"), validation="internal")
+pruned.rules_lhs2_conf50_no_nclust_internV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_no), 2:10, clMethods=c("pam"), validation="internal")
 
 #test stability metrics (remove one collumn at a time sequentially and look at stability)
-#pruned.rules_lhs2_conf50_no_nclust_stabV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_no), 2:5, clMethods=c("pam"), validation="stability")
+pruned.rules_lhs2_conf50_no_nclust_stabV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_no), 2:10, clMethods=c("pam"), validation="stability")
 
 #cluster validity table
 
-pruned.rules_lhs2_conf50_no_nclust_Vsum = data.frame(matrix(c("Connectivity", 6.2036,    "pam", 2,
-  "Dunn",         0.8895,    "pam", 3,
-  "Silhouette",   0.4766,    "pam", 3,
-  "APN",          0.0871,    "pam", 4,
-  "AD",           0.2980,    "pam", 5,
-  "ADM",          0.0905,    "pam", 4,
-  "FOM",          0.0810,    "pam", 5), 
+pruned.rules_lhs2_conf50_no_nclust_Vsum = data.frame(matrix(c("Connectivity",  5.7579,    "pam", 2,
+  "Dunn",         'inf',    "pam", 10,
+  "Silhouette",   0.6516,    "pam", 2,
+  "APN",          0.0000,    "pam", 5,
+  "AD",           0.0000,    "pam", 10,
+  "ADM",          0.0000,    "pam", 5,
+  "FOM",          0.0000,    "pam", 10), 
   byrow = TRUE, nrow = 7, ncol = 4))
 names(pruned.rules_lhs2_conf50_no_nclust_Vsum) = c("measure", "score_at3", "method", "clusters") 
 
 ## run pam to get cluster membership ####
-pruned.rules_lhs2_conf50_no_3clust = pam(dist_pruned.rules_lhs2_conf50_no, diss = TRUE, k=3)
+pruned.rules_lhs2_conf50_no_2clust = pam(dist_pruned.rules_lhs2_conf50_no, diss = TRUE, k=2)
 
 #silhouette widths
-pruned.rules_lhs2_conf50_no_3clust_asw = data.frame(c(1, 2, 3), pruned.rules_lhs2_conf50_no_3clust$silinfo$clus.avg.widths)
-names(pruned.rules_lhs2_conf50_no_3clust_asw) = c("cluster", "asw")
+pruned.rules_lhs2_conf50_no_2clust_asw = data.frame(c(1, 2), pruned.rules_lhs2_conf50_no_2clust$silinfo$clus.avg.widths)
+names(pruned.rules_lhs2_conf50_no_2clust_asw) = c("cluster", "asw")
 
 #add cluster belonging to  quality matrix
-im_lhs2_conf50_no_nosubset$clust_gupta3 = pruned.rules_lhs2_conf50_no_3clust$clustering
+im_lhs2_conf50_no_nosubset$clust_gupta2 = pruned.rules_lhs2_conf50_no_2clust$clustering
 
 #add to rules quality
-quality(pruned.rules_lhs2_conf50_no_red) = cbind(quality(pruned.rules_lhs2_conf50_no_red), Cluster_gupta3 = im_lhs2_conf50_no_nosubset$clust_gupta3)
+quality(pruned.rules_lhs2_conf50_no_red) = cbind(quality(pruned.rules_lhs2_conf50_no_red), Cluster_gupta2 = im_lhs2_conf50_no_nosubset$clust_gupta2)
 
 #convert rules to dataframe
 DataFrame_pruned.rules_lhs2_conf50_no_nosubset = DATAFRAME(pruned.rules_lhs2_conf50_no_red, separate = TRUE, setStart = '', itemSep = '+', setEnd = '')
@@ -1289,78 +1335,56 @@ DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cat2 = factor(DataFrame_pruned.ru
 xtabs_pruned.rules_lhs2_conf50_no_nosubset = xtabs(~Cat1 + Cat2, data = DataFrame_pruned.rules_lhs2_conf50_no_nosubset)
 
 #look at cluster overlap
-xtabsClust_pruned.rules_lhs2_conf50_no_nosubset = xtabs(~Cluster_gupta3, data = DataFrame_pruned.rules_lhs2_conf50_no_nosubset)
+xtabsClust_pruned.rules_lhs2_conf50_no_nosubset = xtabs(~Cluster_gupta2, data = DataFrame_pruned.rules_lhs2_conf50_no_nosubset)
 
 #write out if want
 write.csv(DataFrame_pruned.rules_lhs2_conf50_no_nosubset, file = "ResultsOutput/indQ_LOC-NO_lhs2_conf50_nosubset.csv", row.names = FALSE)
 
 ## get crosstables for each cluster--4 cluster solution ####
 #--need to first subset and drop unsued levels then make table for each cluster
-#cluster 3-1
+#cluster 2-1
 #subset to just cluster 1
-pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta3 == 1, ]
+pruned.rules_lhs2_conf50_no_nosubset_clust2.1 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta2 == 1, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_no_nosubset_clust3.1$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.1$LHS1)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.1$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.1$LHS2)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.1$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.1$Cat1)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.1$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.1$Cat2)
+pruned.rules_lhs2_conf50_no_nosubset_clust2.1$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust2.1$LHS1)
+pruned.rules_lhs2_conf50_no_nosubset_clust2.1$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust2.1$LHS2)
+pruned.rules_lhs2_conf50_no_nosubset_clust2.1$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust2.1$Cat1)
+pruned.rules_lhs2_conf50_no_nosubset_clust2.1$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust2.1$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1, 
-  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1,
-  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.1 = as.matrix(xtabs(~Cat2 + Cat1, data = pruned.rules_lhs2_conf50_no_nosubset_clust2.1))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.1 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.1, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.1))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.1 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.1,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.1))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.1))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.1_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.1_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust2.1))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.1_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust2.1))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.1 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.1_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.1_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
-#cluster 3-2
+#cluster 2-2
 #subset to just cluster 2
-pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta3 == 2, ]
+pruned.rules_lhs2_conf50_no_nosubset_clust2.2 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta2 == 2, ]
 
 #drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_no_nosubset_clust3.2$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.2$LHS1)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.2$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.2$LHS2)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.2$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.2$Cat1)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.2$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.2$Cat2)
+pruned.rules_lhs2_conf50_no_nosubset_clust2.2$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust2.2$LHS1)
+pruned.rules_lhs2_conf50_no_nosubset_clust2.2$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust2.2$LHS2)
+pruned.rules_lhs2_conf50_no_nosubset_clust2.2$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust2.2$Cat1)
+pruned.rules_lhs2_conf50_no_nosubset_clust2.2$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust2.2$Cat2)
 
 #make cross tabs
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2, 
-  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2,
-  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.2 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_no_nosubset_clust2.2))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.2 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.2, 
+  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.2))
+xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.2 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.2,
+  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust2.2))
 
 #get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.2))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.2_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
-
-#cluster 3-3
-#subset to just cluster 3
-pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = DataFrame_pruned.rules_lhs2_conf50_no_nosubset[DataFrame_pruned.rules_lhs2_conf50_no_nosubset$Cluster_gupta3 == 3, ]
-
-#drop extra levels not in this cluster
-pruned.rules_lhs2_conf50_no_nosubset_clust3.3$LHS1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.3$LHS1)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.3$LHS2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.3$LHS2)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.3$Cat1 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.3$Cat1)
-pruned.rules_lhs2_conf50_no_nosubset_clust3.3$Cat2 = factor(pruned.rules_lhs2_conf50_no_nosubset_clust3.3$Cat2)
-
-#make cross tabs
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = as.matrix(xtabs(~Cat1 + Cat2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = rbind( xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3, 
-  coltotals = colSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
-xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = cbind(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3,
-  rowtotals = rowSums(xtabs_pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
-
-#get frequency for each question
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust3.3))
-qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust3.3_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.2_LHS1 = as.data.frame(xtabs(~LHS1, data = pruned.rules_lhs2_conf50_no_nosubset_clust2.2))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.2_LHS2 = as.data.frame(xtabs(~LHS2, data = pruned.rules_lhs2_conf50_no_nosubset_clust2.2))
+qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.2 = merge(qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.2_LHS1, qfreq_pruned.rules_lhs2_conf50_no_nosubset_clust2.2_LHS2, by.x = "LHS1", by.y = "LHS2", all.x = TRUE, all.y = TRUE)
 
 
 write.csv(DataFrame_pruned.rules_lhs2_conf50_no_nosubset, file = "ResultsOutput/indQ_LOC-NO_lhs2_conf50_nosubset_clust.csv", row.names = FALSE)
@@ -1407,11 +1431,11 @@ indQ_IDmatch_rules_no = data.frame(indQ_IDmatch_trans_no, t(as(st_pruned.rules_l
 names(indQ_IDmatch_rules_no)[1:3] = c('StudyID', "TransID", "LOC")
 indQ_IDmatch_rules_no = indQ_IDmatch_rules_no[indQ_IDmatch_rules_no$LOC == 'No' & !is.na(indQ_IDmatch_rules_no$LOC), ]
 
-for(c in 4:19){
+for(c in 4:14){
   indQ_IDmatch_rules_no[[c]] = ifelse(indQ_IDmatch_rules_no[[c]] == "TRUE", 1, 0)
 }
 
-indQ_IDmatch_rules_no$nRulesTrue = rowSums(indQ_IDmatch_rules_no[,4:19])
+indQ_IDmatch_rules_no$nRulesTrue = rowSums(indQ_IDmatch_rules_no[,4:14])
 indQ_n_noRule = nrow(indQ_IDmatch_rules_no[indQ_IDmatch_rules_no$nRulesTrue == 0, ])
 
 indQ_endorse_LOC_conf50_no = ggplot(indQ_IDmatch_rules_no, aes(x = nRulesTrue))+
@@ -1473,10 +1497,10 @@ pruned.rules_lhs1_conf33_HRallno = subset(pruned.rules_lhs1_conf33_HRallno, subs
 
 #check added value and correlation
 pruned.rules_lhs1_conf33_HRallno_qdat = data.frame(quality(pruned.rules_lhs1_conf33_HRallno))
-nrow(pruned.rules_lhs1_conf33_HRallno_qdat[pruned.rules_lhs1_conf33_HRallno_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs1_conf33_HRallno_qdat[pruned.rules_lhs1_conf33_HRallno_qdat$kappa >=0.21, ])
 nrow(pruned.rules_lhs1_conf33_HRallno_qdat[pruned.rules_lhs1_conf33_HRallno_qdat$addVal >=0.05, ])
 
-pruned.rules_lhs1_conf33_HRallno_red = subset(pruned.rules_lhs1_conf33_HRallno, quality(pruned.rules_lhs1_conf33_HRallno)[8]>=0.20)
+pruned.rules_lhs1_conf33_HRallno_red = subset(pruned.rules_lhs1_conf33_HRallno, quality(pruned.rules_lhs1_conf33_HRallno)[8]>=0.21)
 pruned.rules_lhs1_conf33_HRallno_red = subset(pruned.rules_lhs1_conf33_HRallno_red, quality(pruned.rules_lhs1_conf33_HRallno_red)[7]>=0.05)
 
 
@@ -1509,7 +1533,7 @@ xtab_pruned.rules_lhs1_conf33_no_sig = xtabs(~Cat, data = DataFrame_pruned.rules
 write.csv(DataFrame_pruned.rules_lhs1_conf33_HRallno_sig, file = "ResultsOutput/indQ_LOC-HR_NO_lhs1_conf33.csv", row.names = TRUE)
 
 
-##HighRisk/Protective (n=91), has at least 2; loc-no2 (61), sup = 0.20 (33%=14), conf=50####
+##HighRisk/Protective (n=70), has at least 2; loc-no2 (42), sup = 0.20 (33%=14), conf=50####
 rules_lhs2_conf50_HRallno = apriori(LOC_arules_trans_HRall, parameter = list(maxlen = 3, supp = 0.20, conf = 0.50), 
   appearance = list(default="lhs", rhs="loc1=No"))
 
@@ -1534,10 +1558,10 @@ pruned.rules_lhs2_conf50_HRallno = subset(pruned.rules_lhs2_conf50_HRallno, subs
 
 #check added value and correlation
 pruned.rules_lhs2_conf50_HRallno_qdat = data.frame(quality(pruned.rules_lhs2_conf50_HRallno))
-nrow(pruned.rules_lhs2_conf50_HRallno_qdat[pruned.rules_lhs2_conf50_HRallno_qdat$kappa >=0.20, ])
+nrow(pruned.rules_lhs2_conf50_HRallno_qdat[pruned.rules_lhs2_conf50_HRallno_qdat$kappa >=0.21, ])
 nrow(pruned.rules_lhs2_conf50_HRallno_qdat[pruned.rules_lhs2_conf50_HRallno_qdat$addVal >=0.05, ])
 
-pruned.rules_lhs2_conf50_HRallno_red = subset(pruned.rules_lhs2_conf50_HRallno, quality(pruned.rules_lhs2_conf50_HRallno)[8]>=0.20)
+pruned.rules_lhs2_conf50_HRallno_red = subset(pruned.rules_lhs2_conf50_HRallno, quality(pruned.rules_lhs2_conf50_HRallno)[8]>=0.21)
 pruned.rules_lhs2_conf50_HRallno_red = subset(pruned.rules_lhs2_conf50_HRallno_red, quality(pruned.rules_lhs2_conf50_HRallno_red)[7]>=0.05)
 
 
@@ -1549,7 +1573,7 @@ quality(pruned.rules_lhs2_conf50_HRallno_red) = cbind(quality(pruned.rules_lhs2_
 pruned.rules_lhs2_conf50_HRallno_red = sort(pruned.rules_lhs2_conf50_HRallno_red, by=c("fisher.padj_holm", "fisher.p"), decreasing = FALSE)
 
 #reduce to significant
-pruned.rules_lhs2_conf50_HRallno_redsig = pruned.rules_lhs2_conf50_HRallno_red[1:255]
+pruned.rules_lhs2_conf50_HRallno_redsig = pruned.rules_lhs2_conf50_HRallno_red[1:226]
 
 #get confidence intervals for odds ratios
 OR_CI_pruned.rules_lhs2_conf50_HRallno = ARM_ORconf(pruned.rules_lhs2_conf50_HRallno_redsig, LOC_arules_HRall, 2, "No")
@@ -1571,7 +1595,7 @@ dist_pruned.rules_lhs2_conf50_HRallno_gupta = dissimilarity(pruned.rules_lhs2_co
 
 ## mediods partitioning--determine number of clusters ####
 #within cluster sums of squares--look for elbow in graph
-pruned.rules_lhs2_conf50_noHR_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), cluster::pam, method = "wss", k.max=15)+ geom_vline(xintercept = 3, linetype = 3)+labs(subtitle = "Elbow method")
+pruned.rules_lhs2_conf50_noHR_nclustSSW = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), cluster::pam, method = "wss", k.max=15)+ geom_vline(xintercept =6, linetype = 3)+ geom_vline(xintercept = 8, linetype = 3)+labs(subtitle = "Elbow method")
 
 #silhouette width
 pruned.rules_lhs2_conf50_noHR_nclustSil = fviz_nbclust(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), cluster::pam, method = "silhouette", k.max=15)+ labs(subtitle = "Silhouette method")
@@ -1586,13 +1610,13 @@ pruned.rules_lhs2_conf50_noHR_nclustPlotGrid = plot_grid(pruned.rules_lhs2_conf5
 #pruned.rules_lhs2_conf50_noHR_nclust_stabV <- clValid(as.matrix(dist_pruned.rules_lhs2_conf50_HRallno_gupta), 2:10, clMethods=c("pam"), validation="stability")
 
 #cluster validity table
-pruned.rules_lhs2_conf50_noHR_nclust_Vsum = data.frame(matrix(c("Connectivity", 47.3075,    "pam",      2,
-  "Dunn",         0.1645,    "pam",       8,
-  "Silhouette",   0.3050,    "pam",       8,
-  "APN",          0.0065,    "pam",       6,
-  "AD",           1.6487,    "pam",       10,
-  "ADM",          0.0182,    "pam",       6,
-  "FOM",          0.0806,    "pam",       10), 
+pruned.rules_lhs2_conf50_noHR_nclust_Vsum = data.frame(matrix(c("Connectivity", 18.1659,    "pam",      2,
+  "Dunn",         0.2245,    "pam",       6,
+  "Silhouette",   0.3262,    "pam",       8,
+  "APN",          0.0090,    "pam",       2,
+  "AD",           1.5123,    "pam",       10,
+  "ADM",          0.0261,    "pam",       9,
+  "FOM",          0.0785,    "pam",       10), 
   byrow = TRUE, nrow = 7, ncol = 4))
 names(pruned.rules_lhs2_conf50_noHR_nclust_Vsum) = c("measure", "score", "method", "clusters")
 
@@ -1840,11 +1864,11 @@ indQ_IDmatch_rules_noHR = data.frame(indQ_IDmatch_trans_noHR, t(as(st_pruned.rul
 names(indQ_IDmatch_rules_noHR)[1:3] = c('StudyID', "TransID", "LOC")
 indQ_IDmatch_rules_noHR = indQ_IDmatch_rules_noHR[indQ_IDmatch_rules_noHR$LOC == 'No' & !is.na(indQ_IDmatch_rules_noHR$LOC), ]
 
-for(c in 4:258){
+for(c in 4:229){
   indQ_IDmatch_rules_noHR[[c]] = ifelse(indQ_IDmatch_rules_noHR[[c]] == "TRUE", 1, 0)
 }
 
-indQ_IDmatch_rules_noHR$nRulesTrue = rowSums(indQ_IDmatch_rules_noHR[,4:258])
+indQ_IDmatch_rules_noHR$nRulesTrue = rowSums(indQ_IDmatch_rules_noHR[,4:229])
 indQ_n_noRuleHR = nrow(indQ_IDmatch_rules_noHR[indQ_IDmatch_rules_noHR$nRulesTrue == 0, ])
 
 indQ_endorse_LOC_conf50_noHR = ggplot(indQ_IDmatch_rules_noHR, aes(x = nRulesTrue))+
