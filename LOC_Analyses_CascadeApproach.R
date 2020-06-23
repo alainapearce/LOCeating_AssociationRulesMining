@@ -81,6 +81,10 @@ BMInoUW_loc_fisher = fisher.test(matrix(c(93, 22, 13, 8, 14, 7), byrow = TRUE, n
 nrow(LOC_ndup[which(is.na(LOC_ndup$cBodyMass_class) & LOC_ndup$loc1 == 'Yes'), ])
 nrow(LOC_ndup[which(is.na(LOC_ndup$cBodyMass_class) & LOC_ndup$loc1 == 'No'), ])
 
+##objective measurement of parent height/weight in FBS, EBS, DMK, and Test-Retest studies
+HWmeasure = nrow(LOC_ndup[grep("DMK*|Test*|FBS*|EBS*", LOC_ndup$StudyID), ])
+parent_HWmeasure = xtabs(~relationship, data = LOC_ndup[grep("DMK*|Test*|FBS*|EBS*", LOC_ndup$StudyID), ])
+
 ## Race
 race_tab = xtabs(~cRace, data = LOC_ndup)
 nrow(LOC_ndup[is.na(LOC_ndup$cRace), ])
