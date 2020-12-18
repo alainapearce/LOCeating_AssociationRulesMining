@@ -1,3 +1,25 @@
+# This script was written by Alaina Pearce in 2020 
+# tocalculate odds ratio confidence intervals for 
+# Association Rules Mining.
+# Orignial publication in Apetite (2021) entitled 
+# 'Using Association Rules Mining to Characterize of 
+# Loss of Control Eating in Childhood'
+# 
+#     Copyright (C) 2021 Alaina L Pearce
+# 
+#     This program is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+# 
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 #function to calculate odds ratio confidence intervals
 #for association rules
 
