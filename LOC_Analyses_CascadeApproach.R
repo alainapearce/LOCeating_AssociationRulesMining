@@ -994,6 +994,8 @@ write.csv(DataFrame_pruned.rules_lhs2_conf50_lhs1_holm_sigtrend, file = "Results
 ### Logits to look for interaction for rules with 2 items and OR outside of 1 item OR 95% bound ####
 
 ## CEBQ7_gSometimesy ####
+LOC_arules$loc1 = factor(LOC_arules$loc1)
+
 CEBQ7_logit = glm(loc1~cebq7_gSometimes, family=binomial(link="logit"), data = LOC_arules[!is.na(LOC_arules$loc1), ])
 CEBQ7_sum = summary(CEBQ7_logit)
 CEBQ7_coef = coef(CEBQ7_sum)
