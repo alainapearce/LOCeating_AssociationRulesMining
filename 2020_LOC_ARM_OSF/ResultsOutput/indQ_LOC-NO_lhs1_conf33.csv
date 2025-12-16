@@ -1,0 +1,2 @@
+"LHS","RHS","count","support","confidence","coverage","lift","addVal","kappa","oddsRatio","OR_lowerCI","OR_upperCI","fisher.p","fisher.padj_holm","Cat"
+"cebq34_lsSometimes","loc1=No",102,0.645569620253165,0.829268292682927,0.778481012658228,1.08284620036283,0.0634455078728002,0.280673799226041,4.09022556390977,1.81198382412186,9.23294399262581,0.000772389461777914,8e-04,"lsS_FR"
